@@ -9,7 +9,7 @@ describe('DragDrop', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [DragDrop]
-    })
+    }) 
     .compileComponents();
     
     fixture = TestBed.createComponent(DragDrop);

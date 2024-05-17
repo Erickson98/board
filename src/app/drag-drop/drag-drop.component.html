@@ -1,7 +1,7 @@
 <div class="example-container">
     <h2>To do</h2>
 
-    <div cdkDropList #todoList="cdkDropList" [cdkDropListData]="todo" [cdkDropListConnectedTo]="[doneList]"
+    <div cdkDropList #todoList="cdkDropList" [cdkDropListData]="todo" [cdkDropListConnectedTo]="[doneList,doingList]"
         class="example-list" (cdkDropListDropped)="drop($event)">
         @for (item of todo; track item) {
         <div class="example-box" cdkDrag>{{item}}</div>
@@ -10,9 +10,28 @@
 </div>
 
 <div class="example-container">
+    <h2>Doing</h2>
+    <div cdkDropList #doingList="cdkDropList" [cdkDropListData]="doing" [cdkDropListConnectedTo]="[doneList, todoList]"
+        class="example-list" (cdkDropListDropped)="drop($event)">
+        @for (item of doing; track item) {
+        <div class="example-box" cdkDrag>{{item}}</div>
+        }
+    </div>
+
+    <div >
+        <button class="button-add-card" (click)="addCard()">
+            <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add"></mat-icon>
+            <p>Añadir una tarjeta</p>
+
+        </button>
+    </div>
+
+</div>
+
+<div class="example-container">
     <h2>Done</h2>
 
-    <div cdkDropList #doneList="cdkDropList" [cdkDropListData]="done" [cdkDropListConnectedTo]="[todoList]"
+    <div cdkDropList #doneList="cdkDropList" [cdkDropListData]="done" [cdkDropListConnectedTo]="[todoList,doingList]"
         class="example-list" (cdkDropListDropped)="drop($event)">
         @for (item of done; track item) {
         <div class="example-box" cdkDrag>{{item}}</div>
