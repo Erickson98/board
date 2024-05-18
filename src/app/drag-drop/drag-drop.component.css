@@ -15,14 +15,16 @@
     display: block;
 }
 
+.button-transparent {
+    background-color: transparent;
+    border: transparent;
+    cursor: pointer;
+}
+
 .button-add-card{
     display: flex;
     align-items: center;
     gap: 0.3rem;
-    width: 100%;
-    background-color: transparent;
-    border: transparent;
-    cursor: pointer;
 }
 
 .button-add-card:hover{

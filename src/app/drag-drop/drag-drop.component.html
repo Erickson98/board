@@ -31,18 +31,30 @@
      
     </div>
 
-    <div >
-        <button class="button-add-card" (click)="addCard()">
-            <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add"></mat-icon>
-            <p>Añadir una tarjeta</p>
+    <div *ngIf="isAddingCard; else saveButton">
+     
+          
+            <button class="button-transparent button-add-card" (click)="addCard()">
+                <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add"></mat-icon>
+                <p>Añadir una tarjeta</p>
+    
+            </button> 
+            
+        </div>
+        <ng-template #saveButton>
+            <div style="display: flex; width:100%">
 
-        </button>
-        <button class="button-add-card" (click)="saveCard()">
-            <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add"></mat-icon>
-            <p>Guardar</p>
-        
-        </button>
-    </div>
+                <button class="button-transparent button-add-card" (click)="saveCard()">
+                    <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="save"></mat-icon>
+                    <p>Guardar tarjeta</p>
+                    
+                </button>
+                <button class="button-transparent button-add-card"  (click)="avoidAddCard()">
+                    <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="close"></mat-icon>
+                    
+                </button>
+            </div>
+        </ng-template>
 
 
 

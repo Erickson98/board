@@ -1,4 +1,4 @@
-import {Component, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
+import {Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -10,6 +10,8 @@ import {MatIconModule} from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';   
+
 /**
  * @title Drag&Drop connected sorting
  */
@@ -24,7 +26,8 @@ import { FormsModule } from '@angular/forms';
     MatIconModule, 
     MatFormFieldModule,
     MatInputModule,
-    FormsModule
+    FormsModule,
+    CommonModule
   ],
 })
 export class DragDrop implements AfterViewInit {
@@ -37,16 +40,22 @@ export class DragDrop implements AfterViewInit {
   ];
 
   done:string[] = [];
-  doing:string[] = []
+  doing:string[] = [];
+  isAddingCard:boolean = true
   nombre: string = '';
+
+  constructor(private cdr: ChangeDetectorRef) {}
+
   @ViewChild('nameInput', { static: false }) nameInput !: ElementRef;
 
    ngAfterViewInit() {
     this.setFocus();
+    console.log("first")
   }
 
   ngAfterViewChecked() {
     this.setFocus();
+   
   }
 
 
@@ -57,16 +66,31 @@ export class DragDrop implements AfterViewInit {
   }
   
   addCard() {
-    this.doing.unshift("")
+    this.doing.push("")
+     this.isAddingCard = false
+     this.cdr.detectChanges();
 
   }
   saveCard(){
+    if (this.nombre === "") {
+      this.isAddingCard = true;
+      this.doing.pop()
+      this.cdr.detectChanges(); 
+      return
+    }
     this.doing.map((x)=>{
       if (x === "") { x = this.nombre}
     })
-    this.doing.unshift(this.nombre)
+    this.doing[this.doing.length - 1] = this.nombre
     this.nombre = ''
-    console.log(this.doing)
+    this.doing.push("")
+    this.cdr.detectChanges();
+  }
+  avoidAddCard(){
+    this.nombre = ''
+    this.isAddingCard = true;
+    this.doing.pop();
+    this.cdr.detectChanges();
   }
   handleEmptyItem() {
     console.log('Elemento vacío encontrado');
