@@ -13,9 +13,22 @@
     <h2>Doing</h2>
     <div cdkDropList #doingList="cdkDropList" [cdkDropListData]="doing" [cdkDropListConnectedTo]="[doneList, todoList]"
         class="example-list" (cdkDropListDropped)="drop($event)">
-        @for (item of doing; track item) {
-        <div class="example-box" cdkDrag>{{item}}</div>
+        @for (item of doing; track item) { 
+    
+            <div class="example-box"  cdkDrag>
+                @if (item === "") { 
+                
+                            <input #nameInput class=" example-box input-name-card" [(ngModel)]="nombre" placeholder="Escribe tu nombre"    cdkDrag >
+                  
+                }
+                @else{
+                    {{item}}
+                    
+                } 
+            </div>
+            
         }
+     
     </div>
 
     <div >
@@ -24,7 +37,14 @@
             <p>Añadir una tarjeta</p>
 
         </button>
+        <button class="button-add-card" (click)="saveCard()">
+            <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add"></mat-icon>
+            <p>Guardar</p>
+        
+        </button>
     </div>
+
+
 
 </div>
 

@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -7,7 +7,9 @@ import {
   CdkDropList,
 } from '@angular/cdk/drag-drop';
 import {MatIconModule} from '@angular/material/icon';
-
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 /**
  * @title Drag&Drop connected sorting
  */
@@ -16,9 +18,16 @@ import {MatIconModule} from '@angular/material/icon';
   templateUrl: 'drag-drop.component.html',
   styleUrl: 'drag-drop.component.css',
   standalone: true,
-  imports: [CdkDropList, CdkDrag, MatIconModule],
+  imports: [
+    CdkDropList, 
+    CdkDrag, 
+    MatIconModule, 
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule
+  ],
 })
-export class DragDrop {
+export class DragDrop implements AfterViewInit {
   todo = [ 
     'Colocar cualquier imagen pasada por una url',
     'Boton para añadir mas tarjeta',
@@ -29,13 +38,40 @@ export class DragDrop {
 
   done:string[] = [];
   doing:string[] = []
+  nombre: string = '';
+  @ViewChild('nameInput', { static: false }) nameInput !: ElementRef;
 
-  addCard() {
-    this.doing.push("Doing")
-    console.log('Botón presionado: Añadir una tarjeta');
-    // Aquí puedes añadir la lógica que necesitas
+   ngAfterViewInit() {
+    this.setFocus();
   }
 
+  ngAfterViewChecked() {
+    this.setFocus();
+  }
+
+
+  setFocus() {
+    if (this.nameInput) {
+      this.nameInput.nativeElement.focus();
+    }
+  }
+  
+  addCard() {
+    this.doing.unshift("")
+
+  }
+  saveCard(){
+    this.doing.map((x)=>{
+      if (x === "") { x = this.nombre}
+    })
+    this.doing.unshift(this.nombre)
+    this.nombre = ''
+    console.log(this.doing)
+  }
+  handleEmptyItem() {
+    console.log('Elemento vacío encontrado');
+    // Aquí puedes añadir la lógica que necesitas
+  }
   drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);

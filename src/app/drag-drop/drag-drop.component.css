@@ -30,6 +30,12 @@
     background-color: rgba(198, 191, 191, 0.383);
 }
 
+.input-name-card{
+    outline: none;
+    border: none;
+    background-color: transparent;
+}
+
 .example-box {
     padding: 20px 10px;
     border-bottom: solid 1px #ccc;
