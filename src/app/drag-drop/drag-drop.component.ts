@@ -32,14 +32,13 @@ import { CommonModule } from '@angular/common';
 })
 export class DragDrop implements AfterViewInit {
   todo = [ 
-    'Colocar cualquier imagen pasada por una url',
-    'Boton para añadir mas tarjeta',
-    'Ver si las tarjetas se pueden clickear',
+    'Colocar cualquier imagen pasada por una url', 
+    
     'Cambiar titulo a las tarjetas',
     'Crear la ruta home que servira para los tableros',
   ];
 
-  done:string[] = [];
+  done:string[] = ['Boton para añadir mas tarjeta', 'Ver si las tarjetas se pueden clickear',];
   doing:string[] = [];
   isAddingCard:boolean = true
   nombre: string = '';
