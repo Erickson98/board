@@ -1,72 +1,88 @@
-<div class="example-container">
-    <h2>To do</h2>
+<div cdkDropListGroup class="board" (click)="onBoardClick()">
+  @for (col of columnList; track col;let idx = $index) {
+  <div class="example-container" cdkDrag>
+    <h2>{{ col.name }}</h2>
+    <div
+      cdkDropList
+      [cdkDropListData]="col.data"
+      class="example-list"
+      (cdkDropListDropped)="drop($event)"
+    >
+      @for (data of col.data; track data) {
 
-    <div cdkDropList #todoList="cdkDropList" [cdkDropListData]="todo" [cdkDropListConnectedTo]="[doneList,doingList]"
-        class="example-list" (cdkDropListDropped)="drop($event)">
-        @for (item of todo; track item) {
-        <div class="example-box" cdkDrag>{{item}}</div>
+      <div class="example-box" cdkDrag>
+        @if (data === "") {
+
+        <input
+          #nameInput
+          class="example-box input-name-card"
+          [(ngModel)]="nombre"
+          placeholder="Escribe tu nombre"
+          cdkDrag
+        />
+
+        } @else{
+        {{ data }}
+
         }
-    </div>
-</div>
+      </div>
 
-<div class="example-container">
-    <h2>Doing</h2>
-    <div cdkDropList #doingList="cdkDropList" [cdkDropListData]="doing" [cdkDropListConnectedTo]="[doneList, todoList]"
-        class="example-list" (cdkDropListDropped)="drop($event)">
-        @for (item of doing; track item) { 
-    
-            <div class="example-box"  cdkDrag>
-                @if (item === "") { 
-                
-                            <input #nameInput class=" example-box input-name-card" [(ngModel)]="nombre" placeholder="Escribe tu nombre"    cdkDrag >
-                  
-                }
-                @else{
-                    {{item}}
-                    
-                } 
-            </div>
-            
-        }
-     
+      }
     </div>
 
-    <div *ngIf="isAddingCard; else saveButton">
-     
-          
-            <button class="button-transparent button-add-card" (click)="addCard()">
-                <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add"></mat-icon>
-                <p>Añadir una tarjeta</p>
-    
-            </button> 
-            
-        </div>
-        <ng-template #saveButton>
-            <div style="display: flex; width:100%">
+    <div *ngIf="col.estado; else saveButton">
+      <button
+        class="button-transparent button-add-card"
+        (click)="addCard(col.data, col.estado, col.name, idx)"
+      >
+        <mat-icon
+          aria-hidden="false"
+          aria-label="Example home icon"
+          fontIcon="add"
+        ></mat-icon>
+        <p>Añadir una tarjeta</p>
+      </button>
+    </div>
+    <ng-template #saveButton>
+      <div style="display: flex; width: 100%">
+        <button
+          id="card"
+          class="button-transparent button-add-card"
+          (click)="saveCard(col.data, true, idx)"
+        >
+          <mat-icon
+            aria-hidden="false"
+            aria-label="Example home icon"
+            fontIcon="save"
+          ></mat-icon>
+          <p>Guardar tarjeta</p>
+        </button>
+        <button
+          class="button-transparent button-add-card"
+          (click)="avoidAddCard(col.data, idx)"
+        >
+          <mat-icon
+            aria-hidden="false"
+            aria-label="Example home icon"
+            fontIcon="close"
+          ></mat-icon>
+        </button>
+      </div>
+    </ng-template>
+  </div>
+  }
 
-                <button class="button-transparent button-add-card" (click)="saveCard()">
-                    <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="save"></mat-icon>
-                    <p>Guardar tarjeta</p>
-                    
-                </button>
-                <button class="button-transparent button-add-card"  (click)="avoidAddCard()">
-                    <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="close"></mat-icon>
-                    
-                </button>
-            </div>
-        </ng-template>
-
-
-
-</div>
-
-<div class="example-container">
+  <!-- <div class="example-container">
     <h2>Done</h2>
 
-    <div cdkDropList #doneList="cdkDropList" [cdkDropListData]="done" [cdkDropListConnectedTo]="[todoList,doingList]"
+    <div cdkDropList [cdkDropListData]="done"  
         class="example-list" (cdkDropListDropped)="drop($event)">
         @for (item of done; track item) {
         <div class="example-box" cdkDrag>{{item}}</div>
         }
     </div>
+</div>
+
+
+</div> -->
 </div>
