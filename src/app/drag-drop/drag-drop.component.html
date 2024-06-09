@@ -1,88 +1,192 @@
-<div cdkDropListGroup class="board" (click)="onBoardClick()">
+<!-- <div cdkDropListGroup class="board" (click)="onBoardClick()">
   @for (col of columnList; track col;let idx = $index) {
-  <div class="example-container" cdkDrag>
-    <h2>{{ col.name }}</h2>
-    <div
-      cdkDropList
-      [cdkDropListData]="col.data"
-      class="example-list"
-      (cdkDropListDropped)="drop($event)"
-    >
-      @for (data of col.data; track data) {
+  <div class="example-container">
+    <div class="example-container">
+      <h2>{{ col.name }}</h2>
+      <div
+        cdkDropList
+        [cdkDropListData]="col.data"
+        class="example-list"
+        (cdkDropListDropped)="drop($event)"
+      >
+        @for (data of col.data; track data) {
 
-      <div class="example-box" cdkDrag>
-        @if (data === "") {
+        <div class="example-box" cdkDrag>
+          @if (data === "") {
+
+          <input
+            #nameInput
+            class="example-box input-name-card"
+            [(ngModel)]="nombre"
+            placeholder="Escribe tu nombre"
+            cdkDrag
+          />
+
+          } @else{
+          {{ data }}
+
+          }
+        </div>
+
+        }
+      </div>
+
+      <div *ngIf="col.estado; else saveButton">
+        <button
+          class="button-transparent button-add-card"
+          (click)="addCard(col.data, col.estado, col.name, idx)"
+        >
+          <mat-icon
+            aria-hidden="false"
+            aria-label="Example home icon"
+            fontIcon="add"
+          ></mat-icon>
+          <p>Añadir una tarjeta</p>
+        </button>
+      </div>
+      <ng-template #saveButton>
+        <div style="display: flex; width: 100%">
+          <button
+            id="card"
+            class="button-transparent button-add-card"
+            (click)="saveCard(col.data, true, idx)"
+          >
+            <mat-icon
+              aria-hidden="false"
+              aria-label="Example home icon"
+              fontIcon="save"
+            ></mat-icon>
+            <p>Guardar tarjeta</p>
+          </button>
+          <button
+            class="button-transparent button-add-card"
+            (click)="avoidAddCard(col.data, idx)"
+          >
+            <mat-icon
+              aria-hidden="false"
+              aria-label="Example home icon"
+              fontIcon="close"
+            ></mat-icon>
+          </button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+  }
+
+ 
+</div> -->
+<div style="display: flex">
+  <div
+    cdkDropListGroup
+    cdkDropList
+    cdkDropListOrientation="horizontal"
+    class="board"
+    (click)="onBoardClick()"
+    (cdkDropListDropped)="dropHorizontal($event)"
+  >
+    @for (col of columnList; track col;let idx = $index) {
+
+    <div class="example-container" cdkDrag>
+      <div>
+        @if (col.titleEditable) {
+
+        <textarea
+          #textarea
+          (enterPressed)="onEnterPressed(col.id)"
+          appAutoResize
+          [externalHeight]="externalHeight"
+          [(ngModel)]="col.name"
+          maxlength="512"
+          dir="auto"
+          style="font-weight: 900; font-family: Roboto"
+          class="input-title-cards auto-resize"
+          >{{ col.name }}</textarea
+        >
+        } @else {
+        <h2
+          #header
+          role="textbox"
+          class="input-title-cards"
+          style="cursor: pointer"
+          (click)="changeTitle(col.id)"
+        >
+          {{ col.name }}
+        </h2>
+        }
+      </div>
+      <div
+        cdkDropList
+        [cdkDropListData]="col.data"
+        class="example-list"
+        (cdkDropListDropped)="drop($event)"
+      >
+        @for (data of col.data; track data) { @if (data === "") {
 
         <input
           #nameInput
           class="example-box input-name-card"
           [(ngModel)]="nombre"
           placeholder="Escribe tu nombre"
-          cdkDrag
         />
 
         } @else{
-        {{ data }}
-
-        }
+        <div class="example-box" cdkDrag>
+          {{ data }}
+        </div>
+        } }
       </div>
 
-      }
+      <div *ngIf="col.estado; else saveButton">
+        <button
+          class="button-transparent button-add-card"
+          (click)="addCard(col.data, col.estado, col.name, idx)"
+        >
+          <mat-icon
+            aria-hidden="false"
+            aria-label="Example home icon"
+            fontIcon="add"
+          ></mat-icon>
+          <p>Añadir una tarjeta</p>
+        </button>
+      </div>
+      <ng-template #saveButton>
+        <div style="display: flex; width: 100%">
+          <button
+            id="card"
+            class="button-transparent button-add-card"
+            (click)="saveCard(col.data, true, idx)"
+          >
+            <mat-icon
+              aria-hidden="false"
+              aria-label="Example home icon"
+              fontIcon="save"
+            ></mat-icon>
+            <p>Guardar tarjeta</p>
+          </button>
+          <button
+            class="button-transparent button-add-card"
+            (click)="avoidAddCard(col.data, idx)"
+          >
+            <mat-icon
+              aria-hidden="false"
+              aria-label="Example home icon"
+              fontIcon="close"
+            ></mat-icon>
+          </button>
+        </div>
+      </ng-template>
     </div>
-
-    <div *ngIf="col.estado; else saveButton">
-      <button
-        class="button-transparent button-add-card"
-        (click)="addCard(col.data, col.estado, col.name, idx)"
-      >
+    }
+    <div>
+      <button class="button-transparent button-add-card" (click)="addColumn()">
         <mat-icon
           aria-hidden="false"
           aria-label="Example home icon"
           fontIcon="add"
         ></mat-icon>
-        <p>Añadir una tarjeta</p>
+        <p>Añadir nueva columna</p>
       </button>
     </div>
-    <ng-template #saveButton>
-      <div style="display: flex; width: 100%">
-        <button
-          id="card"
-          class="button-transparent button-add-card"
-          (click)="saveCard(col.data, true, idx)"
-        >
-          <mat-icon
-            aria-hidden="false"
-            aria-label="Example home icon"
-            fontIcon="save"
-          ></mat-icon>
-          <p>Guardar tarjeta</p>
-        </button>
-        <button
-          class="button-transparent button-add-card"
-          (click)="avoidAddCard(col.data, idx)"
-        >
-          <mat-icon
-            aria-hidden="false"
-            aria-label="Example home icon"
-            fontIcon="close"
-          ></mat-icon>
-        </button>
-      </div>
-    </ng-template>
   </div>
-  }
-
-  <!-- <div class="example-container">
-    <h2>Done</h2>
-
-    <div cdkDropList [cdkDropListData]="done"  
-        class="example-list" (cdkDropListDropped)="drop($event)">
-        @for (item of done; track item) {
-        <div class="example-box" cdkDrag>{{item}}</div>
-        }
-    </div>
-</div>
-
-
-</div> -->
 </div>
