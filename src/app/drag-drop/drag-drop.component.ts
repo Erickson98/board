@@ -43,6 +43,7 @@ import { AutoResizeDirective } from '../auto-resize.component';
 })
 export class DragDrop implements AfterViewInit {
   todo = [
+    'Cargar los datos y rellenar el board',
     'Colocar cualquier imagen pasada por una url',
     'Cambiar titulo a las tarjetas',
     'Crear la ruta home que servira para los tableros',
@@ -70,13 +71,15 @@ export class DragDrop implements AfterViewInit {
         'Cambiar titulo a las tarjetas',
         'Crear la ruta home que servira para los tableros',
       ],
+      Comments: [],
     },
     {
       id: 2,
       name: 'col2',
       titleEditable: false,
       estado: true,
-      data: ['first element'],
+      data: [],
+      Comments: [],
     },
     {
       id: 3,
@@ -84,8 +87,12 @@ export class DragDrop implements AfterViewInit {
       titleEditable: false,
       estado: true,
       data: ['second element'],
+      Comments: [],
     },
   ];
+
+  db: IDBDatabase | null = null;
+
   constructor(private cdr: ChangeDetectorRef, private eRef: ElementRef) {}
   @ViewChild('textarea') textarea!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('header', { static: false })
@@ -99,23 +106,78 @@ export class DragDrop implements AfterViewInit {
   }
   calculateHeaderHeight(): void {
     if (this.header) {
-      console.log(this.header.nativeElement.textContent);
       this.externalHeight = this.header.nativeElement.scrollHeight;
-      console.log(this.externalHeight);
       this.cdr.detectChanges();
     }
   }
   onEnterPressed(id: number) {
     this.changeTitle(id);
-    console.log('first');
+  }
+
+  onInputChange() {
+    console.log('Nombre actualizado:', this.nombre);
+    this.cdr.detectChanges();
   }
 
   @HostListener('document:click', ['$event'])
   clickout(event: Event) {
+    const clickedInside = this.eRef.nativeElement.contains(event.target);
+
+    const titleCard = this.eRef.nativeElement.querySelector('#titleCard');
+    const titleCard2 = this.eRef.nativeElement.querySelector('#h2Title');
+    const board = this.eRef.nativeElement.querySelector('.board');
+
+    if (board.contains(event.target)) {
+      const target = event.target as HTMLElement;
+      if (target.classList.contains('save-card')) {
+        return;
+      }
+
+      console.log(this.nombre);
+      this.columnList.map((x) => {
+        console.log(x.data[x.data.length - 1]);
+        if (x.data[x.data.length - 1] === '' && this.nombre.trim() === '') {
+          x.estado = true;
+          console.log('first');
+          this.nombre = '';
+          x.data.pop();
+          return;
+        }
+
+        console.log(this.nombre);
+        if (x.data[x.data.length - 1] === '' && this.nombre.trim() !== '') {
+          console.log('first');
+          x.data[x.data.length - 1] = this.nombre;
+          this.nombre = '';
+          x.estado = true;
+          this.cdr.detectChanges();
+        }
+        return x;
+      });
+      this.cdr.detectChanges();
+    }
+
+    if (titleCard2.contains(event.target)) {
+      console.log('first');
+    }
+    console.log(event.target);
+    if (!titleCard.contains(event.target) && clickedInside) {
+      console.log('first');
+      if (titleCard2.contains(event.target)) {
+        console.log('first');
+      }
+      this.columnList.map((x) => {
+        if (x.titleEditable) {
+          x.titleEditable = false;
+        }
+        return x;
+      });
+      this.cdr.detectChanges();
+    }
     const cardElement = this.eRef.nativeElement.querySelector('#card');
     if (cardElement.contains(event.target)) {
       console.log('first');
-      return;
+      // return;
     }
     if (this.eRef.nativeElement.contains(event.target)) {
       this.onClickOutside();
@@ -157,19 +219,33 @@ export class DragDrop implements AfterViewInit {
   ngOnChanges() {
     console.log('first');
   }
-  changeTitle(id: number) {
-    console.log('first');
-    this.calculateHeaderHeight();
-
+  changeTitle(id: number, event: any = '') {
     this.isEditableTitleCard = !this.isEditableTitleCard;
-    this.cdr.detectChanges();
+    const height = event.target?.scrollHeight;
     console.log(id);
     this.columnList.map((x) => {
+      x.estado = true;
+      if (x.data[x.data.length - 1] === '' && this.nombre.trim() === '') {
+        this.nombre = '';
+        x.data.pop();
+      }
+
+      if (x.data[x.data.length - 1] === '' && this.nombre.trim() !== '') {
+        x.data[x.data.length - 1] = this.nombre;
+        this.nombre = '';
+      }
+
       if (x.id === id) {
+        // this.calculateHeaderHeight();
+        this.externalHeight = height;
+
         x.titleEditable = !x.titleEditable;
+      } else {
+        x.titleEditable = false;
       }
       return x;
     });
+    this.cdr.detectChanges();
   }
   onClickOutside() {
     console.log('first');
@@ -184,41 +260,108 @@ export class DragDrop implements AfterViewInit {
   initDatabase() {
     const request = indexedDB.open('MyDatabase', 1);
 
-    request.onupgradeneeded = function (event) {
-      const db = (event.target as IDBOpenDBRequest).result;
+    request.onupgradeneeded = (event) => {
+      this.db = (event.target as IDBOpenDBRequest).result;
+      console.log('Database opened successfully', this.db);
 
-      // Crear un almacén de objetos para "Columnas"
-      const columnasStore = db.createObjectStore('Columnas', {
-        keyPath: 'name',
+      // Crear almacén de objetos para "Columnas"
+      const columnasStore = this.db.createObjectStore('Columnas', {
+        keyPath: 'id',
       });
 
-      // Crear almacenes de objetos para "Columna1" y "Columna2"
-      const columna1Store = db.createObjectStore('Columna1', { keyPath: 'id' });
-      const columna2Store = db.createObjectStore('Columna2', { keyPath: 'id' });
-
-      // Crear índices en "Columna1" y "Columna2" según sea necesario
-      columna1Store.createIndex('foreign_key_id', 'foreign_key_id', {
-        unique: false,
-      });
-      columna2Store.createIndex('foreign_key_id', 'foreign_key_id', {
-        unique: false,
-      });
+      // Crear índice en "Columnas"
+      columnasStore.createIndex('name', 'name', { unique: true });
 
       // Crear almacén de objetos para "Comments"
-      const commentsStore = db.createObjectStore('Comments', { keyPath: 'id' });
-      commentsStore.createIndex('Author', 'Author', { unique: false });
+      const commentsStore = this.db.createObjectStore('Comments', {
+        keyPath: 'id',
+        autoIncrement: true,
+      });
+      this.initializeData(this.db);
     };
 
     request.onsuccess = (event) => {
-      const db = (event.target as IDBOpenDBRequest).result;
-      this.getData(db);
+      this.db = (event.target as IDBOpenDBRequest).result;
+      console.log(this.db);
+      this.checkAndInitializeData(this.db);
+      this.getAllColumns(this.db);
+      console.log('Database initialized successfully');
     };
 
-    request.onerror = function (event) {
-      console.error('Database error:');
+    request.onerror = (event) => {
+      console.error('Database error:', event);
     };
   }
 
+  initializeData(db: IDBDatabase) {
+    const transaction = db.transaction(['Columnas', 'Comments'], 'readwrite');
+
+    const columnasStore = transaction.objectStore('Columnas');
+    const commentsStore = transaction.objectStore('Comments');
+    console.log('first');
+    const columnListAux = [
+      {
+        id: 1,
+        name: 'todo',
+        titleEditable: false,
+        estado: true,
+        data: [
+          'eliminar el bug de que si se esta asignando un nombre a la tarjeta no puede arrastrarse.',
+          'Colocar cualquier imagen pasada por una url',
+          'Cambiar titulo a las tarjetas',
+          'Crear la ruta home que servira para los tableros',
+        ],
+        Comments: [],
+      },
+      {
+        id: 2,
+        name: 'col2',
+        titleEditable: false,
+        estado: true,
+        data: [],
+        Comments: [],
+      },
+      {
+        id: 3,
+        name: 'col3',
+        titleEditable: false,
+        estado: true,
+        data: [],
+        Comments: [],
+      },
+    ];
+    columnListAux.forEach((column) => {
+      columnasStore.add(column);
+    });
+
+    transaction.oncomplete = () => {
+      console.log('All data initialized');
+    };
+
+    transaction.onerror = (event) => {
+      console.error('Transaction error:', event);
+    };
+  }
+  checkAndInitializeData(db: IDBDatabase) {
+    const transaction = db.transaction(['Columnas'], 'readonly');
+    const columnasStore = transaction.objectStore('Columnas');
+    const request = columnasStore.count();
+
+    request.onsuccess = () => {
+      if (request.result === 0) {
+        // Si no hay datos en la base de datos, inicializar
+        this.initializeData(db);
+      } else {
+        console.log(
+          'Data already exists in the database. No need to initialize.'
+        );
+      }
+    };
+
+    request.onerror = (event) => {
+      console.error('Error checking data in the database:', event);
+    };
+  }
   getData(db: IDBDatabase) {
     const transaction = db.transaction(
       ['Columnas', 'Columna1', 'Columna2', 'Comments'],
@@ -244,15 +387,75 @@ export class DragDrop implements AfterViewInit {
       );
     };
   }
+  getAllColumns(db: IDBDatabase) {
+    const transaction = db.transaction(['Columnas'], 'readonly');
+    const columnasStore = transaction.objectStore('Columnas');
+    const request = columnasStore.openCursor();
+    const allColumns: any[] = [];
 
-  onBoardClick() {
+    request.onsuccess = (event) => {
+      const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+      if (cursor) {
+        allColumns.push(cursor.value);
+        cursor.continue();
+      } else {
+        console.log('All columns:', allColumns);
+        // Aquí puedes actualizar el estado de tu componente o realizar otras acciones con los datos
+      }
+      this.columnList = allColumns;
+      console.log(allColumns);
+    };
+
+    request.onerror = (event) => {
+      console.error('Error fetching columns:', event);
+    };
+  }
+
+  update(db: IDBDatabase, columnId: number, col: object) {
+    const transaction = db.transaction(['Columnas'], 'readwrite');
+    const columnasStore = transaction.objectStore('Columnas');
+    const request = columnasStore.get(columnId);
+
+    request.onsuccess = (event) => {
+      let column = (event.target as IDBRequest).result;
+
+      if (column) {
+        column = col;
+        const updateRequest = columnasStore.put(column);
+
+        updateRequest.onsuccess = () => {
+          console.log('Column updated successfully:', column);
+        };
+
+        updateRequest.onerror = (event) => {
+          console.error('Error updating column:', event);
+        };
+      } else {
+        console.log('Column not found:', columnId);
+      }
+    };
+
+    request.onerror = (event) => {
+      console.error('Error fetching column:', event);
+    };
+  }
+
+  updateColumnNameHandler(id: number, col: object) {
+    if (this.db) {
+      this.update(this.db, id, col);
+    } else {
+      console.error('Database not initialized');
+    }
+  }
+
+  onBoardClick(event: Event) {
     console.log('first');
     this.cdr.detectChanges();
   }
 
   ngAfterViewInit() {
     this.setFocus();
-    this.calculateHeaderHeight();
+    // this.calculateHeaderHeight();
     this.cdr.detectChanges();
   }
 
@@ -270,6 +473,7 @@ export class DragDrop implements AfterViewInit {
     this.cdr.detectChanges();
     this.columnList.map((x) => {
       x.estado = true;
+      x.titleEditable = false;
       if (x.data[x.data.length - 1] === '' && this.nombre !== '') {
         console.log(x.data);
         console.log(x.data[x.data.length - 1]);
@@ -278,6 +482,7 @@ export class DragDrop implements AfterViewInit {
         return;
       }
       if (x.data[x.data.length - 1] === '' && this.nombre === '') {
+        console.log('first');
         x.data.pop();
       }
       return x;
@@ -285,8 +490,8 @@ export class DragDrop implements AfterViewInit {
     this.columnList[idx].estado = false;
     this.columnList[idx].data.push('');
   }
-  saveCard(col: string[], estado: boolean = true, idx: any) {
-    if (this.nombre === '') {
+  saveCard(col: string[], idx: any) {
+    if (this.nombre === '' || this.nombre.trim() === '') {
       this.columnList[idx].estado = true;
       let index = col.findIndex((x) => x === '');
       col.splice(index, 1);
@@ -301,17 +506,21 @@ export class DragDrop implements AfterViewInit {
       }
       return x;
     });
+    console.log(col);
     this.columnList[idx].data = col;
     // col[col.length - 1] = this.nombre;
-    this.nombre = '';
+    console.log(this.columnList[idx].data);
     // col.splice(idx, 0, '');
-    col.push('');
-    console.log(this.columnList);
+    console.log(idx);
+    this.nombre = '';
+    this.columnList[idx].data.push('');
+    console.log(this.columnList[idx].data);
     this.cdr.detectChanges();
   }
   avoidAddCard(col: string[], idx: number) {
     this.nombre = '';
     // this.isAddingCard = true;
+    console.log('first');
     this.columnList[idx].estado = true;
     col.pop();
     this.cdr.detectChanges();
@@ -324,6 +533,7 @@ export class DragDrop implements AfterViewInit {
       titleEditable: false,
       data: ['hey'],
       estado: true,
+      Comments: [],
     });
     this.cdr.detectChanges();
   }

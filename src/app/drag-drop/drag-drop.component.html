@@ -82,7 +82,7 @@
     cdkDropList
     cdkDropListOrientation="horizontal"
     class="board"
-    (click)="onBoardClick()"
+    (click)="onBoardClick($event)"
     (cdkDropListDropped)="dropHorizontal($event)"
   >
     @for (col of columnList; track col;let idx = $index) {
@@ -92,6 +92,7 @@
         @if (col.titleEditable) {
 
         <textarea
+          id="titleCard"
           #textarea
           (enterPressed)="onEnterPressed(col.id)"
           appAutoResize
@@ -105,11 +106,12 @@
         >
         } @else {
         <h2
+          id="h2Title"
           #header
           role="textbox"
           class="input-title-cards"
           style="cursor: pointer"
-          (click)="changeTitle(col.id)"
+          (click)="changeTitle(col.id, $event)"
         >
           {{ col.name }}
         </h2>
@@ -127,6 +129,8 @@
           #nameInput
           class="example-box input-name-card"
           [(ngModel)]="nombre"
+          (ngModelChange)="onInputChange()"
+          (keydown.enter)="saveCard(col.data, idx)"
           placeholder="Escribe tu nombre"
         />
 
@@ -151,18 +155,19 @@
         </button>
       </div>
       <ng-template #saveButton>
-        <div style="display: flex; width: 100%">
+        <div style="display: flex; width: 100%" class="save-card">
           <button
             id="card"
-            class="button-transparent button-add-card"
-            (click)="saveCard(col.data, true, idx)"
+            class="button-transparent button-add-card save-card"
+            (click)="saveCard(col.data, idx)"
           >
             <mat-icon
               aria-hidden="false"
               aria-label="Example home icon"
               fontIcon="save"
+              class="save-card"
             ></mat-icon>
-            <p>Guardar tarjeta</p>
+            <p class="save-card">Guardar tarjeta</p>
           </button>
           <button
             class="button-transparent button-add-card"
