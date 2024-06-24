@@ -20,10 +20,21 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AutoResizeDirective } from '../auto-resize.component';
+import { DataService } from '../services/data.service';
 
 /**
  * @title Drag&Drop connected sorting
  */
+
+interface Column {
+  id: number;
+  name: string;
+  titleEditable: boolean;
+  estado: boolean;
+  data: string[];
+  Comments: any[];
+  position: number;
+}
 @Component({
   selector: 'drag-drop',
   templateUrl: 'drag-drop.component.html',
@@ -42,6 +53,7 @@ import { AutoResizeDirective } from '../auto-resize.component';
   ],
 })
 export class DragDrop implements AfterViewInit {
+  data: string[] = [];
   todo = [
     'Cargar los datos y rellenar el board',
     'Colocar cualquier imagen pasada por una url',
@@ -58,7 +70,6 @@ export class DragDrop implements AfterViewInit {
   nombre: string = '';
   isEditableTitleCard: boolean = false;
   externalHeight: number = 0;
-
   columnList = [
     {
       id: 1,
@@ -72,6 +83,7 @@ export class DragDrop implements AfterViewInit {
         'Crear la ruta home que servira para los tableros',
       ],
       Comments: [],
+      position: 0,
     },
     {
       id: 2,
@@ -80,6 +92,7 @@ export class DragDrop implements AfterViewInit {
       estado: true,
       data: [],
       Comments: [],
+      position: 1,
     },
     {
       id: 3,
@@ -88,12 +101,17 @@ export class DragDrop implements AfterViewInit {
       estado: true,
       data: ['second element'],
       Comments: [],
+      position: 2,
     },
   ];
 
   db: IDBDatabase | null = null;
 
-  constructor(private cdr: ChangeDetectorRef, private eRef: ElementRef) {}
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private eRef: ElementRef,
+    private dataService: DataService
+  ) {}
   @ViewChild('textarea') textarea!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('header', { static: false })
   header!: ElementRef<HTMLHeadingElement>;
@@ -150,6 +168,7 @@ export class DragDrop implements AfterViewInit {
           x.data[x.data.length - 1] = this.nombre;
           this.nombre = '';
           x.estado = true;
+          this.updateColumnData(x.id, x.data);
           this.cdr.detectChanges();
         }
         return x;
@@ -255,6 +274,59 @@ export class DragDrop implements AfterViewInit {
 
   ngOnInit() {
     this.initDatabase();
+    this.dataService.data$.subscribe((updatedData) => {
+      this.data = updatedData;
+      console.log('data has been updated:', updatedData);
+      // Realiza cualquier otra acción necesaria
+    });
+  }
+  updateData(value: string[]) {
+    this.dataService.updateData(value);
+  }
+
+  updateColumnData(columnId: number, newElements: Array<any>) {
+    if (!this.db) {
+      console.error('Database not initialized');
+      return;
+    }
+
+    const transaction: IDBTransaction = this.db.transaction(
+      ['Columnas'],
+      'readwrite'
+    );
+    const columnasStore: IDBObjectStore = transaction.objectStore('Columnas');
+
+    const request: any = columnasStore.openCursor(IDBKeyRange.only(columnId));
+
+    request.onsuccess = (event: Event) => {
+      const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+      if (cursor) {
+        const data = cursor.value;
+        if (Array.isArray(data.data)) {
+          if (newElements[newElements.length - 1] === '') {
+            data.data.push(newElements[newElements.length - 2]);
+          } else {
+            data.data.push(newElements[newElements.length - 1]);
+          }
+        } else {
+          data.data = newElements;
+        }
+
+        const updateRequest: IDBRequest<IDBValidKey> = cursor.update(data);
+        updateRequest.onsuccess = () => {
+          console.log('Column updated successfully:', data);
+        };
+        updateRequest.onerror = (error: Event) => {
+          console.error('Error updating column:', error);
+        };
+      } else {
+        console.log(`No entry found for columnId: ${columnId}`);
+      }
+    };
+
+    request.onerror = (event: Event) => {
+      console.error('Error fetching column by ID:', event);
+    };
   }
 
   initDatabase() {
@@ -267,10 +339,12 @@ export class DragDrop implements AfterViewInit {
       // Crear almacén de objetos para "Columnas"
       const columnasStore = this.db.createObjectStore('Columnas', {
         keyPath: 'id',
+        autoIncrement: true,
       });
 
       // Crear índice en "Columnas"
-      columnasStore.createIndex('name', 'name', { unique: true });
+      columnasStore.createIndex('name', 'name', { unique: false });
+      columnasStore.createIndex('position', 'position', { unique: false });
 
       // Crear almacén de objetos para "Comments"
       const commentsStore = this.db.createObjectStore('Comments', {
@@ -284,7 +358,8 @@ export class DragDrop implements AfterViewInit {
       this.db = (event.target as IDBOpenDBRequest).result;
       console.log(this.db);
       this.checkAndInitializeData(this.db);
-      this.getAllColumns(this.db);
+      // this.getAllColumns(this.db);
+      this.searchColumnsByName();
       console.log('Database initialized successfully');
     };
 
@@ -299,9 +374,9 @@ export class DragDrop implements AfterViewInit {
     const columnasStore = transaction.objectStore('Columnas');
     const commentsStore = transaction.objectStore('Comments');
     console.log('first');
+
     const columnListAux = [
       {
-        id: 1,
         name: 'todo',
         titleEditable: false,
         estado: true,
@@ -312,22 +387,23 @@ export class DragDrop implements AfterViewInit {
           'Crear la ruta home que servira para los tableros',
         ],
         Comments: [],
+        position: 1,
       },
       {
-        id: 2,
         name: 'col2',
         titleEditable: false,
         estado: true,
         data: [],
         Comments: [],
+        position: 2,
       },
       {
-        id: 3,
         name: 'col3',
         titleEditable: false,
         estado: true,
         data: [],
         Comments: [],
+        position: 3,
       },
     ];
     columnListAux.forEach((column) => {
@@ -402,7 +478,7 @@ export class DragDrop implements AfterViewInit {
         console.log('All columns:', allColumns);
         // Aquí puedes actualizar el estado de tu componente o realizar otras acciones con los datos
       }
-      this.columnList = allColumns;
+      // this.columnList = allColumns;
       console.log(allColumns);
     };
 
@@ -411,41 +487,293 @@ export class DragDrop implements AfterViewInit {
     };
   }
 
-  update(db: IDBDatabase, columnId: number, col: object) {
-    const transaction = db.transaction(['Columnas'], 'readwrite');
+  update(db: IDBDatabase, columnId: number, col: any) {
+    if (!this.db) {
+      console.error('Database not initialized');
+      return;
+    }
+
+    const transaction = this.db.transaction(['Columnas'], 'readwrite');
     const columnasStore = transaction.objectStore('Columnas');
-    const request = columnasStore.get(columnId);
+    const index = columnasStore.index('position');
+    const request = index.openCursor(IDBKeyRange.only(columnId));
 
     request.onsuccess = (event) => {
-      let column = (event.target as IDBRequest).result;
+      const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+      console.log(cursor);
+      console.log(col);
+      console.log(columnId);
+      if (cursor) {
+        const data = cursor.value;
+        console.log(data);
+        Object.assign(data, col);
 
-      if (column) {
-        column = col;
-        const updateRequest = columnasStore.put(column);
-
+        const updateRequest = cursor.update(data);
         updateRequest.onsuccess = () => {
-          console.log('Column updated successfully:', column);
+          console.log('Column updated successfully:', data);
+        };
+        updateRequest.onerror = (error) => {
+          console.error('Error updating column:', error);
         };
 
-        updateRequest.onerror = (event) => {
-          console.error('Error updating column:', event);
-        };
+        cursor.continue();
       } else {
-        console.log('Column not found:', columnId);
+        console.log('No more entries');
       }
     };
 
     request.onerror = (event) => {
-      console.error('Error fetching column:', event);
+      console.error('Error fetching column by position:', event);
     };
   }
 
-  updateColumnNameHandler(id: number, col: object) {
+  updateColumHandler(id: number, col: object) {
     if (this.db) {
       this.update(this.db, id, col);
     } else {
       console.error('Database not initialized');
     }
+  }
+
+  updateTwoElement(db: IDBDatabase, columnId: number[], col: any) {
+    if (!this.db) {
+      console.error('Database not initialized');
+      return;
+    }
+
+    const transaction = this.db.transaction(['Columnas'], 'readwrite');
+    const columnasStore = transaction.objectStore('Columnas');
+    const index = columnasStore.index('position');
+    const request1 = index.openCursor(IDBKeyRange.only(columnId[0]));
+    const request2 = index.openCursor(IDBKeyRange.only(columnId[1]));
+    let data1: IDBCursorWithValue;
+    request1.onsuccess = (event) => {
+      const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+
+      if (cursor) {
+        data1 = cursor.value;
+
+        cursor.continue();
+      } else {
+        console.log('No more entries');
+      }
+    };
+
+    request1.onerror = (event) => {
+      console.error('Error fetching column by position:', event);
+    };
+    request2.onsuccess = (event) => {
+      const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+
+      if (cursor) {
+        const data = cursor.value;
+        console.log(data);
+        Object.assign(data, col);
+
+        const updateRequest = cursor.update(data);
+        updateRequest.onsuccess = () => {
+          console.log('Column updated successfully:', data);
+        };
+        updateRequest.onerror = (error) => {
+          console.error('Error updating column:', error);
+        };
+
+        cursor.continue();
+      } else {
+        console.log('No more entries');
+      }
+    };
+
+    request2.onerror = (event) => {
+      console.error('Error fetching column by position:', event);
+    };
+  }
+  addColumn(title: string) {
+    if (this.db === null) {
+      return;
+    }
+    const transaction = this.db.transaction(['Columnas'], 'readwrite');
+    const store = transaction.objectStore('Columnas');
+    const column = {
+      name: title,
+      titleEditable: false,
+      estado: true,
+      data: [],
+      Comments: [],
+      position: this.columnList.length + 1,
+    };
+
+    // Añadir nueva columna sin especificar ID
+    const request = store.add(column);
+
+    request.onsuccess = () => {
+      console.log('Columna añadida con ID:', request);
+      this.columnList.push({
+        id: request.result as number,
+        name: title,
+        titleEditable: false,
+        estado: true,
+        data: [],
+        Comments: [],
+        position: this.columnList.length + 1,
+      });
+    };
+
+    request.onerror = (event) => {
+      console.error('Error al añadir la columna:', event);
+    };
+  }
+
+  swapValues(columnId1: number, columnId2: number) {
+    if (!this.db) {
+      console.error('Database not initialized');
+      return;
+    }
+
+    const transaction: IDBTransaction = this.db.transaction(
+      ['Columnas'],
+      'readwrite'
+    );
+    const columnasStore: IDBObjectStore = transaction.objectStore('Columnas');
+    const index: IDBIndex = columnasStore.index('position');
+
+    const request1 = index.openCursor(IDBKeyRange.only(columnId1));
+    const request2 = index.openCursor(IDBKeyRange.only(columnId2));
+
+    let data1: any, data2: any;
+    let cursor1: IDBCursorWithValue | null = null;
+    let cursor2: IDBCursorWithValue | null = null;
+
+    request1.onsuccess = (event: Event) => {
+      cursor1 = (event.target as IDBRequest<IDBCursorWithValue>).result;
+      if (cursor1) {
+        data1 = cursor1.value;
+        if (data2) {
+          performSwap();
+        }
+      } else {
+        console.log('No entry found for columnId1');
+      }
+    };
+
+    request1.onerror = (event: Event) => {
+      console.error('Error fetching column by position for columnId1:', event);
+    };
+
+    request2.onsuccess = (event: Event) => {
+      cursor2 = (event.target as IDBRequest<IDBCursorWithValue>).result;
+      if (cursor2) {
+        data2 = cursor2.value;
+        if (data1) {
+          performSwap();
+        }
+      } else {
+        console.log('No entry found for columnId2');
+      }
+    };
+
+    request2.onerror = (event: Event) => {
+      console.error('Error fetching column by position for columnId2:', event);
+    };
+
+    const performSwap = () => {
+      if (data1 && data2) {
+        const tempPosition: number = data1.position;
+        data1.position = data2.position;
+        data2.position = tempPosition;
+
+        const updateRequest1: IDBRequest<IDBValidKey> = cursor1!.update(data1);
+        updateRequest1.onsuccess = () => {
+          console.log('Column 1 updated successfully:', data1);
+        };
+        updateRequest1.onerror = (error: Event) => {
+          console.error('Error updating column 1:', error);
+        };
+
+        const updateRequest2: IDBRequest<IDBValidKey> = cursor2!.update(data2);
+        updateRequest2.onsuccess = () => {
+          console.log('Column 2 updated successfully:', data2);
+        };
+        updateRequest2.onerror = (error: Event) => {
+          console.error('Error updating column 2:', error);
+        };
+      }
+    };
+  }
+
+  getAllColumnsByIndex() {
+    if (!this.db) {
+      console.error('Database not initialized');
+      return;
+    }
+
+    const transaction = this.db.transaction(['Columnas'], 'readonly');
+    const columnasStore = transaction.objectStore('Columnas');
+    const index = columnasStore.index('position');
+    const request = index.openCursor();
+    const allColumns: any[] = [];
+
+    request.onsuccess = (event) => {
+      const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+      if (cursor) {
+        allColumns.push(cursor.value);
+        cursor.continue();
+      } else {
+        console.log('All columns by index name:', allColumns);
+        // Aquí puedes actualizar el estado de tu componente o realizar otras acciones con los datos
+      }
+      console.log(allColumns);
+      this.columnList = allColumns;
+    };
+
+    request.onerror = (event) => {
+      console.error('Error fetching columns by index name:', event);
+    };
+  }
+
+  searchColumnsByName() {
+    if (this.db) {
+      this.getAllColumnsByIndex();
+    } else {
+      console.error('Database not initialized');
+    }
+  }
+
+  replaceAllColumns(newColumns: Array<{ [key: string]: any }>) {
+    if (!this.db) {
+      console.error('Database not initialized');
+      return;
+    }
+
+    const transaction: IDBTransaction = this.db.transaction(
+      ['Columnas'],
+      'readwrite'
+    );
+    const columnasStore: IDBObjectStore = transaction.objectStore('Columnas');
+
+    // Step 1: Clear all existing columns
+    const clearRequest: any = columnasStore.clear();
+
+    clearRequest.onsuccess = () => {
+      // Step 2: Insert new columns
+      newColumns.forEach((column, index) => {
+        const addRequest: IDBRequest<IDBValidKey> = columnasStore.add({
+          ...column,
+        });
+
+        addRequest.onsuccess = () => {
+          console.log(`New column ${index} added successfully`, column);
+        };
+
+        addRequest.onerror = (error: Event) => {
+          console.error(`Error adding new column ${index}:`, error);
+        };
+      });
+    };
+
+    clearRequest.onerror = (error: Event) => {
+      console.error('Error deleting all columns:', error);
+    };
   }
 
   onBoardClick(event: Event) {
@@ -479,6 +807,7 @@ export class DragDrop implements AfterViewInit {
         console.log(x.data[x.data.length - 1]);
         x.data[x.data.length - 1] = this.nombre;
         this.nombre = '';
+        this.updateColumnData(x.id, x.data);
         return;
       }
       if (x.data[x.data.length - 1] === '' && this.nombre === '') {
@@ -490,7 +819,8 @@ export class DragDrop implements AfterViewInit {
     this.columnList[idx].estado = false;
     this.columnList[idx].data.push('');
   }
-  saveCard(col: string[], idx: any) {
+  saveCard(col: string[], idx: any, colId: number) {
+    // this.updateData(['dasldjaskldj']);
     if (this.nombre === '' || this.nombre.trim() === '') {
       this.columnList[idx].estado = true;
       let index = col.findIndex((x) => x === '');
@@ -513,9 +843,11 @@ export class DragDrop implements AfterViewInit {
     // col.splice(idx, 0, '');
     console.log(idx);
     this.nombre = '';
-    this.columnList[idx].data.push('');
+    this.updateColumnData(colId, this.columnList[idx].data);
     console.log(this.columnList[idx].data);
+    // this.updateColumHandler(colId, col);
     this.cdr.detectChanges();
+    this.columnList[idx].data.push('');
   }
   avoidAddCard(col: string[], idx: number) {
     this.nombre = '';
@@ -525,18 +857,7 @@ export class DragDrop implements AfterViewInit {
     col.pop();
     this.cdr.detectChanges();
   }
-  addColumn() {
-    console.log('first');
-    this.columnList.push({
-      id: 7,
-      name: 'hello',
-      titleEditable: false,
-      data: ['hey'],
-      estado: true,
-      Comments: [],
-    });
-    this.cdr.detectChanges();
-  }
+
   handleEmptyItem() {
     console.log('Elemento vacío encontrado');
     // Aquí puedes añadir la lógica que necesitas
@@ -555,6 +876,7 @@ export class DragDrop implements AfterViewInit {
         event.previousIndex,
         event.currentIndex
       );
+      this.replaceAllColumns(this.columnList);
     } else {
       console.log(event.item.element.nativeElement.innerHTML);
       console.log(event.previousContainer.data);
@@ -567,6 +889,7 @@ export class DragDrop implements AfterViewInit {
         event.previousIndex,
         event.currentIndex
       );
+      this.replaceAllColumns(this.columnList);
     }
   }
   dropCol(event: CdkDragDrop<any>) {
@@ -596,5 +919,13 @@ export class DragDrop implements AfterViewInit {
 
   dropHorizontal(event: CdkDragDrop<any>) {
     moveItemInArray(this.columnList, event.previousIndex, event.currentIndex);
+    console.log(this.columnList);
+    this.columnList.map((x, index) => {
+      console.log(index + 1);
+      x.position = index + 1;
+      console.log(x.name);
+      console.log(x.position);
+    });
+    this.replaceAllColumns(this.columnList);
   }
 }

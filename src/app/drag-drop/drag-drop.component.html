@@ -130,7 +130,7 @@
           class="example-box input-name-card"
           [(ngModel)]="nombre"
           (ngModelChange)="onInputChange()"
-          (keydown.enter)="saveCard(col.data, idx)"
+          (keydown.enter)="saveCard(col.data, idx, col.id)"
           placeholder="Escribe tu nombre"
         />
 
@@ -159,7 +159,7 @@
           <button
             id="card"
             class="button-transparent button-add-card save-card"
-            (click)="saveCard(col.data, idx)"
+            (click)="saveCard(col.data, idx, col.id)"
           >
             <mat-icon
               aria-hidden="false"
@@ -184,7 +184,10 @@
     </div>
     }
     <div>
-      <button class="button-transparent button-add-card" (click)="addColumn()">
+      <button
+        class="button-transparent button-add-card"
+        (click)="addColumn('hello')"
+      >
         <mat-icon
           aria-hidden="false"
           aria-label="Example home icon"
