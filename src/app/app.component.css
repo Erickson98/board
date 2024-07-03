@@ -1,0 +1,16 @@
+.custom-shade-gutter {
+    width: 100%;
+    height: 100%;
+    background-color: grey;
+    position: relative;
+}
+
+.custom-shade-gutter-icon {
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    transition: opacity 0.3s;
+    opacity: 0;
+    position: absolute;
+ 
+}

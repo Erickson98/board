@@ -1,3 +1,96 @@
-<h1>Este es el title que tiene la clase: {{title}}</h1>
- 
-<drag-drop></drag-drop>
+<h1>Este es el title que tiene la clase: {{ title }}</h1>
+<as-split direction="horizontal" [useTransition]="true">
+  <div
+    *asSplitGutter="let isDragged = isDragged"
+    class="custom-shade-gutter"
+    [class.dragged]="isDragged"
+  >
+    <div class="custom-shade-gutter-icon"></div>
+  </div>
+  <as-split-area [size]="50" [visible]="true" [minSize]="30">
+    <drag-drop (visibilitySidePeek)="visibility = $event"></drag-drop>
+  </as-split-area>
+
+  <as-split-area
+    [size]="50"
+    [visible]="visibility"
+    style="background-color: black"
+    [minSize]="30"
+    [maxSize]="70"
+  >
+    <svg
+      width="33"
+      height="28"
+      viewBox="0 0 33 28"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M28 1.5H5C3.067 1.5 1.5 3.067 1.5 5V23C1.5 24.933 3.067 26.5 5 26.5H28C29.933 26.5 31.5 24.933 31.5 23V5C31.5 3.067 29.933 1.5 28 1.5Z"
+        stroke="#FFFDFD"
+        stroke-width="3"
+      />
+      <path
+        d="M26 5.80769H20C19.1716 5.80769 18.5 6.47927 18.5 7.30769V20.6923C18.5 21.5207 19.1716 22.1923 20 22.1923H26C26.8284 22.1923 27.5 21.5207 27.5 20.6923V7.30769C27.5 6.47927 26.8284 5.80769 26 5.80769Z"
+        fill="white"
+        stroke="white"
+        stroke-width="3"
+      />
+    </svg>
+
+    <svg
+      width="34"
+      height="29"
+      viewBox="0 0 34 29"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M28.5 2H5.5C3.567 2 2 3.567 2 5.5V23.5C2 25.433 3.567 27 5.5 27H28.5C30.433 27 32 25.433 32 23.5V5.5C32 3.567 30.433 2 28.5 2Z"
+        stroke="#FFFDFD"
+        stroke-width="3"
+      />
+      <path
+        d="M22.3333 9H11.6667C10.1939 9 9 9.45087 9 10.007V18.993C9 19.5491 10.1939 20 11.6667 20H22.3333C23.8061 20 25 19.5491 25 18.993V10.007C25 9.45087 23.8061 9 22.3333 9Z"
+        fill="white"
+        stroke="white"
+        stroke-width="3"
+      />
+    </svg>
+    <p>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum alias commodi
+      nesciunt quaerat rem magnam aspernatur placeat saepe mollitia! Repellendus
+      reprehenderit, sint aut vitae corrupti quasi distinctio similique
+      doloremque aliquam. Doloribus repellat minus, corrupti rem voluptatum
+      natus magnam quia provident quam ea sed neque et dignissimos nemo,
+      perspiciatis nulla repudiandae alias quae totam beatae distinctio quis
+      dolores eos fugit. Voluptate! Molestias atque, repellat dolorum illum
+      perspiciatis suscipit necessitatibus alias neque provident ratione!
+      Deleniti magni est placeat rem odio at nisi! Deserunt quae pariatur vel
+      iure eos earum doloribus et repudiandae? Unde veniam sint aliquam
+      recusandae placeat? Architecto deserunt mollitia quidem, unde esse quas
+      explicabo atque, maxime facilis laudantium deleniti repudiandae magni
+      alias fuga totam commodi iure. Quas inventore voluptates illo! Debitis
+      dolorum ipsum aut blanditiis. Aliquid labore est id error, eos culpa
+      deleniti incidunt quidem debitis facilis? Animi provident tenetur vero
+      velit odit, est molestias cum iste, ut nesciunt necessitatibus. Lorem
+      ipsum, dolor sit amet consectetur adipisicing elit. Dicta eaque debitis
+      blanditiis! Aperiam, rem. Laboriosam asperiores inventore ex aspernatur
+      excepturi adipisci nulla corrupti ratione voluptatum! Voluptatibus
+      consequuntur libero facere sit? Odit excepturi quae ex labore eligendi?
+      Esse iusto consequatur fugiat impedit velit saepe et nisi quasi facilis
+      ad! Reiciendis officia blanditiis exercitationem non explicabo vitae
+      debitis, hic illo quod ipsum. Tenetur vitae natus sint non reiciendis
+      praesentium voluptatem numquam facere minus, laboriosam consequatur culpa
+      eveniet cum distinctio harum facilis incidunt maiores quibusdam! Doloribus
+      reiciendis eum modi necessitatibus laboriosam ex saepe. Alias, earum!
+      Ullam eius iusto rem assumenda provident voluptate architecto. Dignissimos
+      molestiae molestias et pariatur quasi quisquam ad veniam esse voluptate
+      aspernatur, nobis dicta ducimus! Cupiditate iure reiciendis aspernatur
+      nostrum? Labore cumque accusantium mollitia fugiat adipisci deleniti
+      doloribus rerum dolore! Maxime suscipit rem corporis totam, consequatur
+      voluptas perferendis ad magnam quam ab accusamus placeat, iusto mollitia
+      voluptatem architecto quaerat in!
+    </p>
+  </as-split-area>
+</as-split>

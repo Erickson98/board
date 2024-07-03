@@ -135,7 +135,7 @@
         />
 
         } @else{
-        <div class="example-box" cdkDrag>
+        <div class="example-box" cdkDrag (click)="onClickOnCard(col)">
           {{ data }}
         </div>
         } }

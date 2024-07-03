@@ -5,6 +5,8 @@ import {
   ElementRef,
   ChangeDetectorRef,
   HostListener,
+  EventEmitter,
+  Output,
 } from '@angular/core';
 import {
   CdkDragDrop,
@@ -112,6 +114,8 @@ export class DragDrop implements AfterViewInit {
     private eRef: ElementRef,
     private dataService: DataService
   ) {}
+  @Output() visibilitySidePeek = new EventEmitter<boolean>(); // Asume que enviarás un string, ajusta según necesites
+
   @ViewChild('textarea') textarea!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('header', { static: false })
   header!: ElementRef<HTMLHeadingElement>;
@@ -137,6 +141,10 @@ export class DragDrop implements AfterViewInit {
     this.cdr.detectChanges();
   }
 
+  hasAnyClass(element: HTMLElement, classes: Array<string>) {
+    return classes.some((cls) => element.classList.contains(cls));
+  }
+
   @HostListener('document:click', ['$event'])
   clickout(event: Event) {
     const clickedInside = this.eRef.nativeElement.contains(event.target);
@@ -147,11 +155,17 @@ export class DragDrop implements AfterViewInit {
 
     if (board.contains(event.target)) {
       const target = event.target as HTMLElement;
+      console.log(target.classList);
+      if (this.hasAnyClass(target, ['board', 'example-container'])) {
+        console.log('first');
+        this.visibilitySidePeek.emit(false);
+      }
       if (target.classList.contains('save-card')) {
         return;
       }
 
       console.log(this.nombre);
+      // this.visibilitySidePeek.emit(false);
       this.columnList.map((x) => {
         console.log(x.data[x.data.length - 1]);
         if (x.data[x.data.length - 1] === '' && this.nombre.trim() === '') {
@@ -266,6 +280,9 @@ export class DragDrop implements AfterViewInit {
     });
     this.cdr.detectChanges();
   }
+  onClickOnCard(data: any) {
+    this.visibilitySidePeek.emit(true);
+  }
   onClickOutside() {
     console.log('first');
   }
@@ -280,6 +297,7 @@ export class DragDrop implements AfterViewInit {
       // Realiza cualquier otra acción necesaria
     });
   }
+
   updateData(value: string[]) {
     this.dataService.updateData(value);
   }
@@ -777,11 +795,22 @@ export class DragDrop implements AfterViewInit {
   }
 
   onBoardClick(event: Event) {
-    console.log('first');
     this.cdr.detectChanges();
   }
 
   ngAfterViewInit() {
+    const separator = document.querySelector('.as-split-gutter') as HTMLElement;
+    console.log(separator);
+
+    // separator.style.display = 'none';
+    const asZone = document.querySelectorAll('.as-split-area');
+    if (asZone.length > 1) {
+      const firstSplitArea = asZone[0] as HTMLElement;
+      firstSplitArea.style.overflowX = 'auto';
+      console.log(firstSplitArea.style.overflowX);
+      const secondElement = asZone[1] as HTMLElement;
+      secondElement.setAttribute('ng-reflect-visible', 'true');
+    }
     this.setFocus();
     // this.calculateHeaderHeight();
     this.cdr.detectChanges();
