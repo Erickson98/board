@@ -798,6 +798,7 @@ export class DragDrop implements AfterViewInit {
     this.cdr.detectChanges();
   }
 
+        
   ngAfterViewInit() {
     const separator = document.querySelector('.as-split-gutter') as HTMLElement;
     console.log(separator);
@@ -805,8 +806,9 @@ export class DragDrop implements AfterViewInit {
     // separator.style.display = 'none';
     const asZone = document.querySelectorAll('.as-split-area');
     if (asZone.length > 1) {
+      console.log((asZone[0] as HTMLElement).style)
       const firstSplitArea = asZone[0] as HTMLElement;
-      firstSplitArea.style.overflowX = 'auto';
+      // firstSplitArea.style.overflow = 'auto';
       console.log(firstSplitArea.style.overflowX);
       const secondElement = asZone[1] as HTMLElement;
       secondElement.setAttribute('ng-reflect-visible', 'true');

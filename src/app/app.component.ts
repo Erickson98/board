@@ -10,6 +10,6 @@ import { AngularSplitModule } from 'angular-split';
   styleUrl: './app.component.css',
 })
 export class AppComponent {
-  title = 'angular-17-app';
+  title = 'test';
   visibility = false;
 }

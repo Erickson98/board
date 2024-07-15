@@ -2,14 +2,16 @@
     background-color: rgb(156, 154, 154);
     height: 100vh;
     display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
 }
 
 .example-container {
     width: 237px;
     max-width: 100%;
     margin: 0 25px 25px 0;
-    display: inline-block;
     vertical-align: top;
+    flex: 0 0 auto;
 }
 
 .example-list {
