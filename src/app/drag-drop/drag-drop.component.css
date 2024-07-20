@@ -1,8 +1,7 @@
 .board{
     background-color: rgb(156, 154, 154);
     height: 100vh;
-    display: flex;
-    overflow-x: auto;
+    display: flex; 
     white-space: nowrap;
 }
 
