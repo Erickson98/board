@@ -7,6 +7,7 @@ import {
   HostListener,
   EventEmitter,
   Output,
+  Inject
 } from '@angular/core';
 import {
   CdkDragDrop,
@@ -23,10 +24,27 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AutoResizeDirective } from '../auto-resize.component';
 import { DataService } from '../services/data.service';
+import {
+  MatDialog,
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatDialogTitle,
+  MatDialogContent,
+  MatDialogActions,
+  MatDialogClose,
+} from '@angular/material/dialog';
+import {MatButtonModule} from '@angular/material/button'; 
+
+
 
 /**
  * @title Drag&Drop connected sorting
  */
+
+export interface DialogData {
+  animal: string;
+  name: string;
+}
 
 interface Column {
   id: number;
@@ -108,12 +126,25 @@ export class DragDrop implements AfterViewInit {
   ];
 
   db: IDBDatabase | null = null;
+  a1: string = "";
+  n1: string = "";
 
   constructor(
     private cdr: ChangeDetectorRef,
     private eRef: ElementRef,
-    private dataService: DataService
+    private dataService: DataService,
+    public dialog: MatDialog
   ) {}
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+      data: {name: this.n1, animal: this.a1},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      this.a1 = result;
+    });
+  }
   @Output() visibilitySidePeek = new EventEmitter<boolean>(); // Asume que enviarás un string, ajusta según necesites
 
   @ViewChild('textarea') textarea!: ElementRef<HTMLTextAreaElement>;
@@ -956,5 +987,32 @@ export class DragDrop implements AfterViewInit {
       console.log(x.position);
     });
     this.replaceAllColumns(this.columnList);
+  }
+}
+ 
+
+@Component({
+  selector: 'dialog-overview-example-dialog',
+  templateUrl: '../modal-for-card/modal-for-card.component.html',
+  standalone: true,
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatButtonModule,
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
+  ],
+})
+export class DialogOverviewExampleDialog {
+  constructor(
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+  ) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 }
