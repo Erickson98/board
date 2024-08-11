@@ -1,25 +1,31 @@
 .board{
     background-color: rgb(156, 154, 154);
-    height: 100vh;
-    display: flex; 
+    height: 98%;
+    display: inline-flex; 
     white-space: nowrap;
+    position: absolute;
 }
 
 .example-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     width: 237px;
     max-width: 100%;
     margin: 0 25px 25px 0;
     vertical-align: top;
-    flex: 0 0 auto;
+    flex: 1;
 }
 
 .example-list {
+    display: flex;
+    flex-direction: column;
     border: solid 1px #ccc;
     min-height: 60px;
     background: white;
     border-radius: 4px;
-    overflow: hidden;
-    display: block;
+    overflow: auto; 
+    max-height: 100%;
 }
 
 .button-transparent {
@@ -144,4 +150,6 @@ h2.input-title-cards {
     border: 3px solid #006eff;
 }
 
-    
+.t{
+    flex: 1;
+}

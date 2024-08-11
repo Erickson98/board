@@ -76,7 +76,7 @@
 
  
 </div> -->
-<div >
+<div>
   <div
     cdkDropListGroup
     cdkDropList
@@ -84,6 +84,7 @@
     class="board"
     (click)="onBoardClick($event)"
     (cdkDropListDropped)="dropHorizontal($event)"
+    id="scroll-container"
   >
     @for (col of columnList; track col;let idx = $index) {
 
@@ -122,6 +123,7 @@
         [cdkDropListData]="col.data"
         class="example-list"
         (cdkDropListDropped)="drop($event)"
+        cdkDrag
       >
         @for (data of col.data; track data) { @if (data === "") {
 
@@ -135,7 +137,12 @@
         />
 
         } @else{
-        <div class="example-box" cdkDrag (click)="onClickOnCard(col)">
+        <div
+          class="example-box"
+          cdkDrag
+          (click)="onClickOnCard(col)"
+          (cdkDragStarted)="drag($event)"
+        >
           {{ data }}
         </div>
         } }

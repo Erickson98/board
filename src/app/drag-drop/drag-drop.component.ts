@@ -15,6 +15,7 @@ import {
   CdkDrag,
   CdkDropList,
   CdkDropListGroup,
+  CdkDragStart,
 } from '@angular/cdk/drag-drop';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -115,6 +116,7 @@ export class DragDrop implements AfterViewInit {
     private dataService: DataService
   ) {}
   @Output() visibilitySidePeek = new EventEmitter<boolean>(); // Asume que enviarás un string, ajusta según necesites
+  @ViewChild('element') element!: ElementRef;
 
   @ViewChild('textarea') textarea!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('header', { static: false })
@@ -798,7 +800,6 @@ export class DragDrop implements AfterViewInit {
     this.cdr.detectChanges();
   }
 
-        
   ngAfterViewInit() {
     const separator = document.querySelector('.as-split-gutter') as HTMLElement;
     console.log(separator);
@@ -806,7 +807,7 @@ export class DragDrop implements AfterViewInit {
     // separator.style.display = 'none';
     const asZone = document.querySelectorAll('.as-split-area');
     if (asZone.length > 1) {
-      console.log((asZone[0] as HTMLElement).style)
+      console.log((asZone[0] as HTMLElement).style);
       const firstSplitArea = asZone[0] as HTMLElement;
       // firstSplitArea.style.overflow = 'auto';
       console.log(firstSplitArea.style.overflowX);
@@ -820,6 +821,57 @@ export class DragDrop implements AfterViewInit {
 
   ngAfterViewChecked() {
     this.setFocus();
+    const scrollContainer = document.getElementById(
+      'scroll-container'
+    ) as HTMLElement;
+    const scrollSpeed = 10; // Velocidad de desplazamiento
+    let scrollInterval: number | null = null;
+    let scrollDirection: number = 0; // 0: no scroll, -1: left, 1: right
+    console.log(scrollContainer);
+    scrollContainer.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      const { clientX } = e;
+      const { left, right } = scrollContainer.getBoundingClientRect();
+
+      if (clientX < left + 50) {
+        scrollDirection = -1;
+      } else if (clientX > right - 50) {
+        scrollDirection = 1;
+      } else {
+        scrollDirection = 0;
+      }
+
+      if (scrollInterval === null && scrollDirection !== 0) {
+        startScrolling();
+      }
+    });
+
+    scrollContainer.addEventListener('dragleave', (e) => {
+      startScrolling();
+    });
+
+    scrollContainer.addEventListener('drop', stopScrolling);
+    scrollContainer.addEventListener('dragend', stopScrolling);
+
+    function startScrolling() {
+      if (scrollInterval === null) {
+        scrollInterval = window.setInterval(() => {
+          if (scrollDirection === -1) {
+            scrollContainer.scrollLeft -= scrollSpeed;
+          } else if (scrollDirection === 1) {
+            scrollContainer.scrollLeft += scrollSpeed;
+          }
+        }, 50); // Ajusta el intervalo de tiempo según sea necesario
+      }
+    }
+
+    function stopScrolling() {
+      if (scrollInterval !== null) {
+        clearInterval(scrollInterval);
+        scrollInterval = null;
+      }
+      scrollDirection = 0;
+    }
   }
 
   setFocus() {
@@ -896,7 +948,21 @@ export class DragDrop implements AfterViewInit {
   trackByFn(index: number, item: any) {
     return index; // or item.id if you have a unique identifier
   }
-
+  drag(event: CdkDragStart<string[]>) {
+    console.log(event);
+    // this.selectText(this.element.nativeElement);
+  }
+  private selectText(element: HTMLElement): void {
+    if (window.getSelection && document.createRange) {
+      const selection = window.getSelection(); // Obtiene la selección actual
+      if (selection) {
+        const range = document.createRange(); // Crea un nuevo rango
+        range.selectNodeContents(element); // Selecciona el contenido del elemento
+        selection.removeAllRanges(); // Limpia cualquier selección existente
+        selection.addRange(range); // Añade el nuevo rango a la selección
+      }
+    }
+  }
   drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
       console.log(event.container.data);
@@ -950,13 +1016,13 @@ export class DragDrop implements AfterViewInit {
 
   dropHorizontal(event: CdkDragDrop<any>) {
     moveItemInArray(this.columnList, event.previousIndex, event.currentIndex);
-    console.log(this.columnList);
-    this.columnList.map((x, index) => {
-      console.log(index + 1);
-      x.position = index + 1;
-      console.log(x.name);
-      console.log(x.position);
-    });
-    this.replaceAllColumns(this.columnList);
+    // console.log(this.columnList);
+    // this.columnList.map((x, index) => {
+    //   console.log(index + 1);
+    //   x.position = index + 1;
+    //   console.log(x.name);
+    //   console.log(x.position);
+    // });
+    // this.replaceAllColumns(this.columnList);
   }
 }

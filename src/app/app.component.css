@@ -14,3 +14,19 @@
     position: absolute;
  
 }
+
+.container, .df{
+    height: 100%;
+}
+
+ 
+.tr{
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    flex-direction: column;
+}
+.t{
+    flex: 1;
+    height: 100%;
+}
