@@ -1,11 +1,12 @@
 .board{
     background-color: rgb(156, 154, 154);
-    height: 98%;
+    height: 100%;
     display: inline-flex; 
     white-space: nowrap;
     position: absolute;
 }
 
+ 
 .example-container {
     display: flex;
     flex-direction: column;
@@ -15,7 +16,10 @@
     margin: 0 25px 25px 0;
     vertical-align: top;
     flex: 1;
+    
 }
+
+ 
 
 .example-list {
     display: flex;
@@ -23,9 +27,10 @@
     border: solid 1px #ccc;
     min-height: 60px;
     background: white;
-    border-radius: 4px;
+    border-radius: 10px;
     overflow: auto; 
     max-height: 100%;
+    scrollbar-gutter: stable ;
 }
 
 .button-transparent {
@@ -62,8 +67,11 @@
     justify-content: space-between;
     box-sizing: border-box;
     cursor:pointer;
-    background: white;
+    background: #F4F4F4;
     font-size: 14px;
+    white-space: normal;
+    word-break: break-all;
+
 }
 
 .cdk-drag-preview {
@@ -104,16 +112,17 @@
 
  
 .input-title-cards {
-    background-color: rgb(74, 67, 67);
-    color: #fff;
+    background-color: #F4F4F4;
+    color: #000000;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 10px;
     display: block;
     overflow-wrap: break-word;
     resize: none;
     overflow: hidden; 
     width: 100%; 
-    font-size: 24px;
+    font-size: 16px;
+    font-weight: 600;
     line-height: 1.5;
     white-space: pre-wrap;
     word-wrap: break-word;
@@ -152,4 +161,22 @@ h2.input-title-cards {
 
 .t{
     flex: 1;
+}
+ 
+
+
+.ex{
+      
+            top: 10px;
+            right: 10px;
+            color: #ccc;
+            cursor: move;
+            width: 24px;
+            height: 24px;
+        
+}
+
+
+.dd{
+
 }

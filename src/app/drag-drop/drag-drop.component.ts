@@ -16,6 +16,7 @@ import {
   CdkDropList,
   CdkDropListGroup,
   CdkDragStart,
+  CdkDragHandle,
 } from '@angular/cdk/drag-drop';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -53,6 +54,7 @@ interface Column {
     CommonModule,
     CdkDropListGroup,
     AutoResizeDirective,
+    CdkDragHandle,
   ],
 })
 export class DragDrop implements AfterViewInit {
