@@ -10,7 +10,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 /* Cambiar el ancho del scrollbar */
 ::-webkit-scrollbar {
-    scrollbar-width: thin;
+    /* scrollbar-width: thin; */
+    width: 10px;
     /* Ancho del scrollbar */
     margin: 0 20px;
 }
@@ -29,7 +30,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     /* Color del thumb */
     border-radius: 10px;
     /* Bordes redondeados */
-    border: 3px solid #2F3736;
+    /* border: 3px solid #2F3736; */
     /* Añadir espacio alrededor del thumb */
 }
 

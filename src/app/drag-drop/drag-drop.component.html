@@ -138,22 +138,28 @@
           } @else{
           <div class="example-box" cdkDrag (click)="onClickOnCard(col)">
             {{ data }}
+            <mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
           </div>
           } }
         </div>
 
-        <div *ngIf="col.estado; else saveButton">
-          <button
-            class="button-transparent button-add-card"
-            (click)="addCard(col.data, col.estado, col.name, idx)"
-          >
-            <mat-icon
-              aria-hidden="false"
-              aria-label="Example home icon"
-              fontIcon="add"
-            ></mat-icon>
-            <p>Añadir una tarjeta</p>
-          </button>
+        <div
+          *ngIf="col.estado; else saveButton"
+          style="padding: 8px 0px; border-radius: 8px"
+        >
+          <div class="container-button-save">
+            <button
+              class="button-transparent button-add-card"
+              (click)="addCard(col.data, col.estado, col.name, idx)"
+            >
+              <mat-icon
+                aria-hidden="false"
+                aria-label="Example home icon"
+                fontIcon="add"
+              ></mat-icon>
+              <p>Añadir una tarjeta</p>
+            </button>
+          </div>
         </div>
         <ng-template #saveButton>
           <div style="display: flex; width: 100%" class="save-card">
@@ -185,7 +191,7 @@
       </div>
     </div>
     }
-    <div>
+    <div class="container-button-save">
       <button
         class="button-transparent button-add-card"
         (click)="addColumn('hello')"

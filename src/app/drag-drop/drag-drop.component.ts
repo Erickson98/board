@@ -25,6 +25,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AutoResizeDirective } from '../auto-resize.component';
 import { DataService } from '../services/data.service';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 /**
  * @title Drag&Drop connected sorting
@@ -55,6 +56,7 @@ interface Column {
     CdkDropListGroup,
     AutoResizeDirective,
     CdkDragHandle,
+    MatProgressBarModule,
   ],
 })
 export class DragDrop implements AfterViewInit {
