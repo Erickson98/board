@@ -26,6 +26,8 @@ import { CommonModule } from '@angular/common';
 import { AutoResizeDirective } from '../auto-resize.component';
 import { DataService } from '../services/data.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { AvatarModule } from 'primeng/avatar';
+import { AvatarGroupModule } from 'primeng/avatargroup';
 
 /**
  * @title Drag&Drop connected sorting
@@ -57,6 +59,8 @@ interface Column {
     AutoResizeDirective,
     CdkDragHandle,
     MatProgressBarModule,
+    AvatarModule,
+    AvatarGroupModule,
   ],
 })
 export class DragDrop implements AfterViewInit {

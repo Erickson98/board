@@ -92,8 +92,15 @@
     word-break: break-all;
     border-radius: 5px;
     margin: 0px 6px;
+    gap: 10px;
 }
 
+
+.mat-primary.mat-mdc-progress-bar{
+    border-radius: 10px;
+    /* --mdc-linear-progress-active-indicator-height: 8px;
+    --mdc-linear-progress-track-height:8px */
+}
 
 .cdk-drag-preview {
     box-sizing: border-box;
@@ -178,6 +185,38 @@ h2.input-title-cards {
 .input-title-cards:focus {
     outline: none;
     border: 3px solid #006eff;
+}
+
+
+.subtasks{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.bottom-card{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.information-card{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+
+.information-card-detail{
+    margin: 0px 0px 0px 5px;
+}
+
+.bottom-card-iconAvatar{
+    /* width: 100%; */
+}
+
+.size-icon{
+    /* font-size: 16px */
 }
 
 .t{

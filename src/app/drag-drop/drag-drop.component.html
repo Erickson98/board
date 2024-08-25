@@ -137,8 +137,55 @@
 
           } @else{
           <div class="example-box" cdkDrag (click)="onClickOnCard(col)">
+            <img
+              mat-card-image
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/800px-Unofficial_JavaScript_logo_2.svg.png"
+              alt="Photo of a Shiba Inu"
+              style="border-radius: 8px"
+            />
+            <div>
+              <button style="border-radius: 5px; margin-right: 2px">
+                Wirefram
+              </button>
+              <button style="border-radius: 5px; margin-right: 2px">UI</button>
+            </div>
             {{ data }}
+            <div class="subtasks">
+              <div>Subtasks</div>
+              <div>1/3</div>
+            </div>
             <mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
+            <div class="bottom-card">
+              <p-avatar
+                image="https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png"
+                styleClass="mr-2"
+                shape="circle"
+                class="bottom-card-iconAvatar"
+              />
+              <div class="information-card">
+                <mat-icon
+                  aria-hidden="false"
+                  aria-label="Example home icon"
+                  fontIcon="attach_file"
+                  class="information-card-detail size-icon"
+                ></mat-icon>
+                <div class="information-card-detail">1</div>
+                <mat-icon
+                  aria-hidden="false"
+                  aria-label="Example home icon"
+                  fontIcon="chat"
+                  class="information-card-detail size-icon"
+                ></mat-icon>
+                <div class="information-card-detail">1</div>
+                <mat-icon
+                  aria-hidden="false"
+                  aria-label="Example home icon"
+                  fontIcon="schedule"
+                  class="information-card-detail size-icon"
+                ></mat-icon>
+                <div class="information-card-detail">8 d</div>
+              </div>
+            </div>
           </div>
           } }
         </div>
