@@ -31,6 +31,8 @@ import { AvatarGroupModule } from 'primeng/avatargroup';
 import { TooltipModule } from 'primeng/tooltip';
 import { MatCardModule } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { ModalCard } from '../modal-card/modal-card.component';
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * @title Drag&Drop connected sorting
@@ -67,6 +69,7 @@ interface Column {
     TooltipModule,
     MatCardModule,
     MatTooltipModule,
+    ModalCard
   ],
 })
 export class DragDrop implements AfterViewInit {
@@ -127,8 +130,20 @@ export class DragDrop implements AfterViewInit {
   constructor(
     private cdr: ChangeDetectorRef,
     private eRef: ElementRef,
-    private dataService: DataService
+    private dataService: DataService,
+    public dialog: MatDialog
   ) {}
+
+   openDialog(): void {
+    const dialogRef = this.dialog.open(ModalCard, {
+      data: {name: "this.name", animal: "dsds"},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
+
   @Output() visibilitySidePeek = new EventEmitter<boolean>(); // Asume que enviarás un string, ajusta según necesites
   @ViewChild('element') element!: ElementRef;
 
@@ -297,7 +312,9 @@ export class DragDrop implements AfterViewInit {
     this.cdr.detectChanges();
   }
   onClickOnCard(data: any) {
+    
     this.visibilitySidePeek.emit(true);
+    this.openDialog()
   }
   onClickOutside() {
     console.log('first');
