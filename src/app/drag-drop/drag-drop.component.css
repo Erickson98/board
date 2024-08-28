@@ -1,21 +1,11 @@
-*{
-    font-family: ui-sans-serif,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI Variable Display",
-        "Segoe UI",
-        Helvetica,
-        "Apple Color Emoji",
-        Arial,
-        sans-serif,
-        "Segoe UI Emoji",
-}
+ 
 .board{
     background-color: rgb(25, 25, 25);
     height: 100%;
     display: inline-flex; 
     white-space: nowrap;
     position: absolute;
+    
 }
 
  
@@ -218,8 +208,10 @@ h2.input-title-cards {
     margin: 0px 0px 0px 5px;
 }
 
-.bottom-card-iconAvatar{
+.bottom-card-iconAvatard{
     /* width: 100%; */
+    background-color: #006eff;
+    border-radius: 50px;
 }
 
 .size-icon{
@@ -246,4 +238,70 @@ h2.input-title-cards {
 
 .dd{
 
+}
+
+/* Contenedor del botón con el tooltip */
+.tooltip-container {
+    position: relative;
+    /* Posiciona el tooltip respecto al botón */
+    display: inline-flex;
+    z-index: 1;
+    /* Establece un contexto de apilamiento para el contenedor */
+   
+    /* Asegura que el contenido del tooltip sea visible fuera del contenedor si es necesario */
+}
+
+ .example-header-image {
+     background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+     background-size: cover;
+ }
+
+/* Tooltip oculto inicialmente */
+.tooltip-text {
+    visibility: hidden;
+    /* Oculto inicialmente */
+    width: 50px;
+    /* Ancho del tooltip */
+    background-color: #555;
+    /* Fondo oscuro del tooltip */
+    color: #fff;
+    /* Color del texto */
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px 0;
+
+    /* Posición del tooltip debajo del botón */
+    position: absolute;
+    z-index: 999;
+    /* Coloca el tooltip por encima de otros elementos */
+    top: 125%;
+    /* Muestra el tooltip debajo del botón */
+    left: 50%;
+    margin-left: -25px;
+    /* Ajuste para centrar el tooltip */
+
+    /* Efecto de desvanecimiento */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+/* Triángulo del tooltip */
+.tooltip-text::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    /* Flecha encima del tooltip */
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #555 transparent;
+    /* Flecha hacia arriba */
+}
+
+/* Mostrar el tooltip al hacer hover */
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+    /* Mostrar el tooltip con un efecto de desvanecimiento */
 }

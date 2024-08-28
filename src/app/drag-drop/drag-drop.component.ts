@@ -28,6 +28,9 @@ import { DataService } from '../services/data.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
+import { TooltipModule } from 'primeng/tooltip';
+import { MatCardModule } from '@angular/material/card';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 /**
  * @title Drag&Drop connected sorting
@@ -61,6 +64,9 @@ interface Column {
     MatProgressBarModule,
     AvatarModule,
     AvatarGroupModule,
+    TooltipModule,
+    MatCardModule,
+    MatTooltipModule,
   ],
 })
 export class DragDrop implements AfterViewInit {

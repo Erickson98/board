@@ -101,7 +101,7 @@
             [(ngModel)]="col.name"
             maxlength="512"
             dir="auto"
-            style="font-weight: 900; font-family: Roboto"
+            style="font-weight: 900"
             class="input-title-cards auto-resize"
             >{{ col.name }}</textarea
           >
@@ -156,12 +156,26 @@
             </div>
             <mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
             <div class="bottom-card">
-              <p-avatar
-                image="https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png"
-                styleClass="mr-2"
-                shape="circle"
-                class="bottom-card-iconAvatar"
-              />
+              <p-avatarGroup styleClass="mb-3">
+                <p-avatar
+                  image="https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png"
+                  shape="circle"
+                  class="bottom-card-iconAvatar"
+                  matTooltip="data.name"
+                />
+
+                <p-avatar
+                  image="https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png"
+                  shape="circle"
+                  class="bottom-card-iconAvatar"
+                  pTooltip="Enter your username"
+                  tooltipPosition="Right"
+                  placeholder="Right"
+                  matTooltip="dsd"
+                />
+              </p-avatarGroup>
+              <div mat-card-avatar class="example-header-image"></div>
+
               <div class="information-card">
                 <mat-icon
                   aria-hidden="false"
@@ -238,7 +252,7 @@
       </div>
     </div>
     }
-    <div  >
+    <div>
       <button
         class="button-transparent button-add-card container-button-save"
         (click)="addColumn('hello')"
