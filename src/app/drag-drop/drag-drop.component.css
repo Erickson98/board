@@ -305,3 +305,7 @@ h2.input-title-cards {
     opacity: 1;
     /* Mostrar el tooltip con un efecto de desvanecimiento */
 }
+
+.plus-icon{
+    background-color: #006eff;
+}

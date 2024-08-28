@@ -833,6 +833,11 @@ export class DragDrop implements AfterViewInit {
     this.cdr.detectChanges();
   }
 
+  actionProfile(){
+    console.log("first")
+    alert("ds")
+  }
+
   ngAfterViewChecked() {
     this.setFocus();
     const scrollContainer = document.getElementById(

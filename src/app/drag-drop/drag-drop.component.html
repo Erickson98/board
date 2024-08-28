@@ -158,21 +158,23 @@
             <div class="bottom-card">
               <p-avatarGroup styleClass="mb-3">
                 <p-avatar
+                  pButton
                   image="https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png"
                   shape="circle"
                   class="bottom-card-iconAvatar"
                   matTooltip="data.name"
+                  (click)="actionProfile()" 
                 />
 
                 <p-avatar
-                  image="https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png"
+                  image="../assets/add icon.svg"
                   shape="circle"
-                  class="bottom-card-iconAvatar"
-                  pTooltip="Enter your username"
-                  tooltipPosition="Right"
-                  placeholder="Right"
+                  class="bottom-card-iconAvatar  "
+                  (click)="actionProfile()"
                   matTooltip="dsd"
                 />
+                
+                   
               </p-avatarGroup>
               <div mat-card-avatar class="example-header-image"></div>
 
