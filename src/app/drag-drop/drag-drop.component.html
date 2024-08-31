@@ -87,7 +87,7 @@
     id="scroll-container"
   >
     @for (col of columnList; track col;let idx = $index) {
-    <div class="dd">
+    <div>
       <div class="example-container">
         <div cdkDragLockAxis="x" cdkDrag>
           @if (col.titleEditable) {
@@ -136,7 +136,7 @@
           />
 
           } @else{
-          <div class="example-box" cdkDrag (click)="onClickOnCard(col)">
+          <div class="example-box" cdkDrag (click)="onClickOnCard(col, $event)">
             <img
               mat-card-image
               src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/800px-Unofficial_JavaScript_logo_2.svg.png"
@@ -163,18 +163,21 @@
                   shape="circle"
                   class="bottom-card-iconAvatar"
                   matTooltip="data.name"
-                  (click)="actionProfile()" 
                 />
-
+                <p-avatar
+                  pButton
+                  image="https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png"
+                  shape="circle"
+                  class="bottom-card-iconAvatar"
+                  matTooltip="data.name"
+                />
                 <p-avatar
                   image="../assets/add icon.svg"
                   shape="circle"
-                  class="bottom-card-iconAvatar  "
-                  (click)="actionProfile()"
+                  class="bottom-card-iconAvatar plus-button"
+                  (click)="actionProfile($event)"
                   matTooltip="dsd"
                 />
-                
-                   
               </p-avatarGroup>
               <div mat-card-avatar class="example-header-image"></div>
 

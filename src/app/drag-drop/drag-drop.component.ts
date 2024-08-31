@@ -69,7 +69,7 @@ interface Column {
     TooltipModule,
     MatCardModule,
     MatTooltipModule,
-    ModalCard
+    ModalCard,
   ],
 })
 export class DragDrop implements AfterViewInit {
@@ -134,12 +134,12 @@ export class DragDrop implements AfterViewInit {
     public dialog: MatDialog
   ) {}
 
-   openDialog(): void {
+  openDialog(): void {
     const dialogRef = this.dialog.open(ModalCard, {
-      data: {name: "this.name", animal: "dsds"},
+      data: { name: 'this.name', animal: 'dsds' },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       console.log('The dialog was closed');
     });
   }
@@ -183,7 +183,15 @@ export class DragDrop implements AfterViewInit {
     const titleCard = this.eRef.nativeElement.querySelector('#titleCard');
     const titleCard2 = this.eRef.nativeElement.querySelector('#h2Title');
     const board = this.eRef.nativeElement.querySelector('.board');
+    const plusButton = this.eRef.nativeElement.querySelector('.plusbutton');
+    const clickInCard = this.eRef.nativeElement.querySelector('.example-box');
 
+    // if (plusButton.contains(event.target)) {
+    //   console.log('first');
+    //   // this.actionProfile();
+    // } else if (clickInCard.contains(event.target)) {
+    //   this.openDialog();
+    // }
     if (board.contains(event.target)) {
       const target = event.target as HTMLElement;
       console.log(target.classList);
@@ -311,10 +319,16 @@ export class DragDrop implements AfterViewInit {
     });
     this.cdr.detectChanges();
   }
-  onClickOnCard(data: any) {
-    
+  onClickOnCard(data: any, event: any) {
     this.visibilitySidePeek.emit(true);
-    this.openDialog()
+
+    // Selector para encontrar el <p-avatargroup> con clase específica y styleclass
+    const pAvatarGroup = document.querySelector(
+      'p-avatargroup.p-element[ng-reflect-style-class="mb-3"]'
+    );
+    if (!pAvatarGroup?.contains(event.target)) {
+      console.log('first');
+    }
   }
   onClickOutside() {
     console.log('first');
@@ -850,9 +864,8 @@ export class DragDrop implements AfterViewInit {
     this.cdr.detectChanges();
   }
 
-  actionProfile(){
-    console.log("first")
-    alert("ds")
+  actionProfile(event: any) {
+    console.log('first');
   }
 
   ngAfterViewChecked() {
