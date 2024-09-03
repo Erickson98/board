@@ -73,6 +73,7 @@ interface Column {
   ],
 })
 export class DragDrop implements AfterViewInit {
+  isClickAvatarGroup: boolean = false;
   data: string[] = [];
   todo = [
     'Cargar los datos y rellenar el board',
@@ -320,15 +321,14 @@ export class DragDrop implements AfterViewInit {
     this.cdr.detectChanges();
   }
   onClickOnCard(data: any, event: any) {
-    this.visibilitySidePeek.emit(true);
-
-    // Selector para encontrar el <p-avatargroup> con clase específica y styleclass
-    const pAvatarGroup = document.querySelector(
-      'p-avatargroup.p-element[ng-reflect-style-class="mb-3"]'
-    );
-    if (!pAvatarGroup?.contains(event.target)) {
+    if (this.isClickAvatarGroup) {
       console.log('first');
+      this.isClickAvatarGroup = false;
+      return;
     }
+    this.visibilitySidePeek.emit(true);
+    console.log('first');
+    this.openDialog();
   }
   onClickOutside() {
     console.log('first');
@@ -866,6 +866,7 @@ export class DragDrop implements AfterViewInit {
 
   actionProfile(event: any) {
     console.log('first');
+    this.isClickAvatarGroup = true;
   }
 
   ngAfterViewChecked() {

@@ -1,0 +1,16 @@
+.cover-page{
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.container-img{
+    width: 250px;
+    height: auto;
+}
+
+.covers-page-img{
+    width: 100%;
+    height: auto;
+}
