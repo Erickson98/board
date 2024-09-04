@@ -13,6 +13,9 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { DragDrop } from '../drag-drop/drag-drop.component';
+import { AvatarModule } from 'primeng/avatar';
+import { MatIconModule } from '@angular/material/icon';
+
 @Component({
   selector: 'modal-card',
   templateUrl: 'modal-card.component.html',
@@ -27,6 +30,8 @@ import { DragDrop } from '../drag-drop/drag-drop.component';
     MatDialogContent,
     MatDialogActions,
     MatDialogClose,
+    AvatarModule,
+    MatIconModule,
   ],
 })
 export class ModalCard {
@@ -60,5 +65,15 @@ export class ModalCard {
     if (image != null) {
       console.log(this.get_average_rgb(image.src));
     }
+    const editableElement = document.getElementById('editable');
+    if (editableElement === null) {
+      return;
+    }
+    editableElement.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') {
+        event.preventDefault(); // Evitar el salto de línea
+        editableElement.blur(); // Quitar el foco del elemento
+      }
+    });
   }
 }
