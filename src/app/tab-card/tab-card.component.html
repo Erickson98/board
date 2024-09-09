@@ -1,17 +1,14 @@
 <div class="card">
   <p-tabView>
     <p-tabPanel header="Header I">
-      <mat-selection-list style="color: white">
-        @for (shoe of typesOfShoes; track shoe) {
-        <mat-list-option
-          class="mdc-list-item__primary-text"
-          checkboxPosition="before"
-          style="color: white"
-        >
-          <input type="text" />
-        </mat-list-option>
-        }
-      </mat-selection-list>
+     
+        <div style="display: flex; gap:5px">
+          <p-checkbox [binary]="true" inputId="binary" />
+          <p><a href="#" target="_blank" rel="noopener noreferrer">Doing</a></p>
+          <textarea name="" id="" placeholder="Escribir descripción..." (input)="this.auto_grow($event.target)"
+            style="min-height: 56px; width: 100%; overflow: hidden; resize: none" class="description-text-area"></textarea>
+        </div>
+      
     </p-tabPanel>
     <p-tabPanel header="Header II">
       <p>
