@@ -1,12 +1,13 @@
+@import 'primeng/resources/themes/md-dark-indigo/theme.css';
+ 
 /* You can add global styles to this file, and also import other style files */
 :root{
     /* color-scheme: light dark; */
 
 }
 html{
-    background: rgb(25, 25, 25);
+ 
 }
-
 
 
 body{

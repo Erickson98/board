@@ -15,6 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { DragDrop } from '../drag-drop/drag-drop.component';
 import { AvatarModule } from 'primeng/avatar';
 import { MatIconModule } from '@angular/material/icon';
+import { TabCard } from '../tab-card/tab-card.component';
 
 @Component({
   selector: 'modal-card',
@@ -32,6 +33,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatDialogClose,
     AvatarModule,
     MatIconModule,
+    TabCard,
   ],
 })
 export class ModalCard {
@@ -75,5 +77,13 @@ export class ModalCard {
         editableElement.blur(); // Quitar el foco del elemento
       }
     });
+  }
+  auto_grow(element: any) {
+    console.log('first');
+    // Restablecer la altura temporalmente para evitar errores de cálculo
+    console.log(element.style.height);
+    element.style.height = 'auto';
+    // Ajustar la altura al scrollHeight del contenido
+    element.style.height = element.scrollHeight + 10 + 'px';
   }
 }
