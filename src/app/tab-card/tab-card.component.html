@@ -1,14 +1,92 @@
 <div class="card">
   <p-tabView>
-    <p-tabPanel header="Header I">
-     
-        <div style="display: flex; gap:5px">
-          <p-checkbox [binary]="true" inputId="binary" />
-          <p><a href="#" target="_blank" rel="noopener noreferrer">Doing</a></p>
-          <textarea name="" id="" placeholder="Escribir descripción..." (input)="this.auto_grow($event.target)"
-            style="min-height: 56px; width: 100%; overflow: hidden; resize: none" class="description-text-area"></textarea>
+    <p-tabPanel header="Tasks">
+      <div>
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <h2>Our Desing Proces</h2>
+          @if (listTasks.tasks.length > 0) {
+
+          <div style="display: flex; align-items: center; gap: 10px">
+            <mat-progress-spinner
+              class="example-margin"
+              [mode]="mode"
+              [value]="(listTasks.completed / listTasks.tasks.length) * 100"
+              [diameter]="32"
+            >
+            </mat-progress-spinner>
+            <p>{{ listTasks.completed }} / {{ listTasks.tasks.length }}</p>
+          </div>
+          }
         </div>
-      
+        @for (item of listTasks.tasks; track $index) { @if (item.content) {
+        <div class="container-for-content-task">
+          <p-checkbox
+            [(ngModel)]="item.status"
+            [binary]="true"
+            variant="filled"
+            (onChange)="onCheckboxChange($event, $index)"
+          />
+
+          <!-- Mostrar enlace solo si isTaskSubmitted es true -->
+          <div class="contianer-buttons-for-content-task">
+            <div>
+              <button class="style-button-for-content-task">
+                <p [ngClass]="item.status ? 'text-the-task' : ''">
+                  {{ item.content }}
+                </p>
+              </button>
+            </div>
+            <div class="container-for-actions-task">
+              <button
+                class="style-button-for-content-task button-for-eliminate"
+                style="height: 24px"
+                (click)="delteTask($index)"
+              >
+                <img
+                  class="img-for-button-delete"
+                  src="../../assets/delete-icon.svg"
+                  alt=""
+                  srcset=""
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+        }
+
+        <!-- Mostrar textarea solo si isTaskSubmitted es false -->
+
+        }
+        <div style="padding: 10px 0px 0px 30px">
+          <textarea
+            *ngIf="isTaskSubmitted"
+            [(ngModel)]="contentTask"
+            placeholder="Escribir descripción..."
+            (input)="auto_grow($event.target)"
+            style="
+              min-height: 56px;
+              width: 100%;
+              overflow: hidden;
+              resize: none;
+            "
+            class="description-text-area"
+          ></textarea>
+
+          <!-- Botón para activar el enlace -->
+
+          <button *ngIf="!isTaskSubmitted" (click)="changeStatusForAddOrNot()">
+            Add Task
+          </button>
+          <button *ngIf="isTaskSubmitted" (click)="addTask()">Add</button>
+          <button *ngIf="isTaskSubmitted" (click)="cancelTask()">Cancel</button>
+        </div>
+      </div>
     </p-tabPanel>
     <p-tabPanel header="Header II">
       <p>

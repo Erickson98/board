@@ -1,3 +1,45 @@
 @import "@angular/material/prebuilt-themes/pink-bluegrey.css";
 
+ *{
+    font-size: 16px;
+ }
+.container-for-content-task{
+    display: flex;
+    gap: 5px;
+    
+}
+.style-button-for-content-task{
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    
+}
+.text-the-task{
+    display: flex;
+    text-decoration: line-through;
+    color: rgba(255, 255, 255, 0.284);
+}
+.contianer-buttons-for-content-task{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 0px; 
+}
+.contianer-buttons-for-content-task:hover{
+    background-color: gray;
+}
  
+.container-for-actions-task{
+    
+    display: flex;
+}
+
+.contianer-buttons-for-content-task:hover .img-for-button-delete{
+    display: flex;
+}
+.container-for-actions-task:hover{
+}
+
+.img-for-button-delete{
+    display: none;
+}
