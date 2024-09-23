@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  HostListener,
   QueryList,
   ViewChild,
   ViewChildren,
@@ -20,7 +21,7 @@ import {
 } from '@angular/material/progress-spinner';
 import { BadgeModule } from 'primeng/badge';
 import { AvatarModule } from 'primeng/avatar';
-import { Subscription } from 'rxjs';
+import { fromEvent, Observable, Subscription } from 'rxjs';
 
 /**
  * @title Tab group with asynchronously loading tab contents
@@ -46,7 +47,27 @@ import { Subscription } from 'rxjs';
   ],
 })
 export class TabCard {
-  constructor(private cdr: ChangeDetectorRef) {}
+  resizeObservable: Observable<Event>;
+  resizeSubscription: Subscription;
+  constructor(private cdr: ChangeDetectorRef) {
+    this.resizeObservable = fromEvent(window, 'resize'); // Inicialización de Observable
+    this.resizeSubscription = new Subscription(); // Inicialización de Subscription (vacía por defecto)
+
+    // Ejemplo de suscripción a resizeObservable
+    this.resizeSubscription = fromEvent(window, 'resize').subscribe((event) => {
+      this.onResize(event);
+    });
+  }
+  onResize(event: any) {
+    console.log('Window resized:', event);
+    console.log('New width:', window.innerWidth);
+    console.log('New height:', window.innerHeight);
+    this.ngDoCheck();
+  }
+  ngOnDestroy() {
+    // Desuscribirse del evento para evitar fugas de memoria
+    this.resizeSubscription.unsubscribe();
+  }
   @ViewChild('editableDiv') editableDiv!: ElementRef;
   @ViewChild('commentTextarea') commentTextarea!: ElementRef;
   @ViewChildren('commentTextareas') commentTextareas!: QueryList<ElementRef>;
@@ -96,7 +117,7 @@ export class TabCard {
   contentComment = '';
   isTaskSubmitted: boolean = false; // Controla si el enlace o el textarea se muestra
   textButton: string = 'Add element';
-
+  previousLength = 0;
   auto_grow(element: any) {
     console.log('first');
     // Restablecer la altura temporalmente para evitar errores de cálculo
@@ -178,6 +199,7 @@ export class TabCard {
       this.listComments[index].edit = false;
     }
   }
+
   addComment(avatarImg: string, name: string, comment: string) {
     console.log(comment);
     const textAreaMain = document.getElementById('div-comment-main');
@@ -201,12 +223,28 @@ export class TabCard {
       edit: false,
       height: height,
     });
+    this.previousLength = this.listComments.length;
     this.contentComment = '';
     this.editableDiv.nativeElement.innerText = '';
   }
   ngAfterViewInit() {
     console.log('first');
     this.cdr.detectChanges(); // Solo forzar la detección de cambios si el componente sigue activo
+  }
+
+  ngDoCheck(): void {
+    // Si cambia la longitud de la lista, ajustamos los textareas
+    if (this.listComments.length > 5) {
+      console.log('first');
+      this.previousLength = this.listComments.length;
+      this.adjustTextareaHeights();
+    }
+  }
+  adjustTextareaHeights(): void {
+    this.commentTextareas.forEach((textareaRef) => {
+      const textarea = textareaRef.nativeElement as HTMLTextAreaElement;
+      this.auto_grow(textarea); // Ajustar la altura automáticamente
+    });
   }
   deletCommnet(index: number) {
     this.listComments.splice(index, 1);
