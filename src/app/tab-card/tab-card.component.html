@@ -1,6 +1,11 @@
 <div class="card">
   <p-tabView>
     <p-tabPanel header="Tasks">
+      <ng-template pTemplate="header">
+        <div style="display: flex">
+          <span> Tasks </span>
+        </div>
+      </ng-template>
       <div>
         <div
           style="
@@ -88,13 +93,146 @@
         </div>
       </div>
     </p-tabPanel>
-    <p-tabPanel header="Header II">
-      <p>
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-        accusantium...
-      </p>
+    <p-tabPanel header="Comments">
+      <ng-template pTemplate="header">
+        <div style="display: flex; align-items: center; gap: 5px">
+          <span> Comments </span>
+          <p-badge value="2" />
+        </div>
+      </ng-template>
+      <div class="container-for-write-comments">
+        <p-avatar
+          image="https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png"
+          shape="circle"
+        />
+        <div style="width: 100%">
+          <div style="display: flex; width: 100%; flex-wrap: wrap">
+            <div style="display: flex; flex-grow: 1; max-width: 100%">
+              <div
+                id="div-comment-main"
+                #editableDiv
+                contenteditable="true"
+                *ngIf="!isTaskSubmitted"
+                [(ngModel)]="contentComment"
+                placeholder="Hacer comentario..."
+                (input)="onInputChange($event)"
+                ngClass="text-area-for-comments"
+                (keydown)="
+                  onKeyDown(
+                    $event,
+                    'https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png',
+                    'Jose Rodriguez',
+                    contentComment
+                  )
+                "
+              ></div>
+            </div>
+            <!-- <textarea
+                *ngIf="!isTaskSubmitted"
+                [(ngModel)]="item.comment"
+                placeholder="Hacer comentario..."
+                (input)="auto_grow($event.target)"
+                ngClass="text-area-for-comments"
+              ></textarea> -->
+            <div>
+              <img
+                (click)="
+                  addComment(
+                    'https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png',
+                    'Jose Rodriguez',
+                    contentComment
+                  )
+                "
+                src="../../assets/attach_file.svg"
+                alt=""
+                srcset=""
+              />
+              <img
+                (click)="
+                  addComment(
+                    'https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png',
+                    'Jose Rodriguez',
+                    contentComment
+                  )
+                "
+                [src]="
+                  contentComment.trim() !== ''
+                    ? '../../assets/expand_circle_up_filled.svg'
+                    : '../../assets/expand_circle_up.svg'
+                "
+                alt=""
+                srcset=""
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      @for (item of listComments; track $index) {
+      <div class="container-comments">
+        <div class="container-for-comment-section">
+          <p-avatar
+            image="https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png"
+            shape="circle"
+          />
+          <div style="width: 100%">
+            <div style="display: flex; justify-content: space-between">
+              <div style="display: flex; gap: 5px; margin-bottom: 5px">
+                <p>Jose Rodriguez</p>
+                <p>* 2 hours ago</p>
+              </div>
+              <div class="action-for-comments">
+                <img
+                  src="../../assets/delete-icon.svg"
+                  alt=""
+                  srcset=""
+                  (click)="deletCommnet($index)"
+                />
+                <img
+                  src="../../assets/edit.svg"
+                  (click)="editar($index)"
+                  alt=""
+                  srcset=""
+                />
+              </div>
+            </div>
+            <div style="display: flex; flex-wrap: wrap">
+              <div style="display: flex; flex-grow: 1; max-width: 100%">
+                <textarea
+                  (keydown)="onKeyDownTextArea($event, $index)"
+                  #commentTextareas
+                  [ngStyle]="{ 'height.px': item.height }"
+                  *ngIf="!isTaskSubmitted"
+                  [(ngModel)]="item.comment"
+                  placeholder="Hacer comentario..."
+                  (input)="auto_grow($event.target)"
+                  [ngClass]="{
+                    'text-area-for-comments': true,
+                    'editable-background': item.edit,
+                    'no-focus-textaree': !item.edit
+                  }"
+                  [readonly]="!item.edit"
+                >
+                </textarea>
+              </div>
+              <!-- <textarea
+                *ngIf="!isTaskSubmitted"
+                [(ngModel)]="item.comment"
+                placeholder="Hacer comentario..."
+                (input)="auto_grow($event.target)"
+                ngClass="text-area-for-comments"
+              ></textarea> -->
+            </div>
+          </div>
+        </div>
+      </div>
+      }
     </p-tabPanel>
     <p-tabPanel header="Header III">
+      <ng-template pTemplate="header">
+        <div style="display: flex">
+          <span> Activities </span>
+        </div>
+      </ng-template>
       <p>At vero eos et accusamus et iusto odio dignissimos...</p>
     </p-tabPanel>
   </p-tabView>

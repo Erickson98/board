@@ -43,3 +43,70 @@
 .img-for-button-delete{
     display: none;
 }
+
+.container-for-write-comments{
+    display: flex;
+    gap: 10px;
+}
+.container-comments{
+
+}
+
+.container-for-comment-section{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.container-for-comment-section:hover .action-for-comments{
+    opacity: 1;
+}
+.text-area-for-comments{
+    min-height: 56px;
+    width: 100%;
+    overflow: hidden;
+    resize: none;
+    background: transparent;
+    border: transparent;
+    max-width: 100%;
+    word-break: break-word;
+    cursor: default;
+    padding: 5px 10px;
+}
+
+.text-area-for-comments:empty:before {
+    content: attr(placeholder);
+    color: gray;
+}
+ 
+.text-area-for-comments:active {
+border:0cap;
+}
+p{
+    margin: 0px;
+}
+
+button,img{
+    cursor: pointer;
+    background: transparent;
+    border: transparent;
+}
+
+.action-for-comments{
+    display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        opacity: 0;
+}
+ 
+
+.no-focus-textaree:focus-visible { 
+    cursor: auto;
+    border: none;
+    /* Quita el borde */
+    outline: none;
+    /* Quita el contorno al enfocarse */
+    resize: none;
+    /* Opcional: Deshabilita el redimensionamiento */
+}

@@ -1,4 +1,11 @@
-import { Component, NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TabViewModule } from 'primeng/tabview';
 import { MatListModule } from '@angular/material/list';
@@ -11,6 +18,10 @@ import {
   ProgressSpinnerMode,
   MatProgressSpinnerModule,
 } from '@angular/material/progress-spinner';
+import { BadgeModule } from 'primeng/badge';
+import { AvatarModule } from 'primeng/avatar';
+import { Subscription } from 'rxjs';
+
 /**
  * @title Tab group with asynchronously loading tab contents
  */
@@ -30,9 +41,18 @@ import {
     CommonModule,
     MatCheckboxModule,
     MatProgressSpinnerModule,
+    BadgeModule,
+    AvatarModule,
   ],
 })
 export class TabCard {
+  constructor(private cdr: ChangeDetectorRef) {}
+  @ViewChild('editableDiv') editableDiv!: ElementRef;
+  @ViewChild('commentTextarea') commentTextarea!: ElementRef;
+  @ViewChildren('commentTextareas') commentTextareas!: QueryList<ElementRef>;
+
+  isEditable: boolean = false;
+
   checked = true;
 
   typesOfShoes: string[] = [
@@ -50,9 +70,30 @@ export class TabCard {
     completed: 1,
   };
 
+  listComments = [
+    {
+      avatarImg:
+        'https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png',
+      name: 'JoseP07',
+      timestamp: '2 hours ago',
+      comment: 'Completar esto antes del 18',
+      edit: false,
+      height: 54,
+    },
+    {
+      avatarImg:
+        'https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png',
+      name: 'JoseP07',
+      timestamp: '2 hours ago',
+      comment: 'Completar esto antes del 18',
+      edit: false,
+      height: 54,
+    },
+  ];
   value = 50;
   mode: ProgressSpinnerMode = 'determinate';
   contentTask = '';
+  contentComment = '';
   isTaskSubmitted: boolean = false; // Controla si el enlace o el textarea se muestra
   textButton: string = 'Add element';
 
@@ -100,5 +141,84 @@ export class TabCard {
   cancelTask() {
     this.isTaskSubmitted = false;
     this.contentTask = '';
+  }
+  onInputChange(event: any) {
+    const value = event.target.innerText;
+    this.contentComment = value;
+    console.log(event.target.style.heightStyle);
+
+    // Reiniciar la altura para recalcularla
+
+    const element = event.target as HTMLElement; // Acceder al <div>
+
+    // Obtener la altura actual del div
+    const height = element.offsetHeight;
+    console.log('Altura actual (offsetHeight):', height);
+
+    // Si necesitas saber la altura total del contenido, incluso si es más grande que el contenedor
+    const scrollHeight = element.scrollHeight;
+    console.log(scrollHeight);
+  }
+  onKeyDown(
+    event: KeyboardEvent,
+    avatarImg: string,
+    name: string,
+    comment: string
+  ): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.addComment(avatarImg, name, comment);
+    } else if (event.key === 'Escape') {
+      this.editableDiv.nativeElement.innerText = '';
+    }
+  }
+  onKeyDownTextArea(event: KeyboardEvent, index: number) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.listComments[index].edit = false;
+    }
+  }
+  addComment(avatarImg: string, name: string, comment: string) {
+    console.log(comment);
+    const textAreaMain = document.getElementById('div-comment-main');
+    console.log(textAreaMain);
+    53;
+    if (comment.trim() === '' || textAreaMain === null) {
+      return;
+    }
+    console.log(textAreaMain.style.height);
+    const element = textAreaMain as HTMLElement; // Acceder al <div>
+
+    // Obtener la altura actual del div
+    const height = element.scrollHeight;
+
+    console.log(height);
+    this.listComments.unshift({
+      avatarImg: avatarImg,
+      name: name,
+      timestamp: '2 hours ago',
+      comment: comment,
+      edit: false,
+      height: height,
+    });
+    this.contentComment = '';
+    this.editableDiv.nativeElement.innerText = '';
+  }
+  ngAfterViewInit() {
+    console.log('first');
+    this.cdr.detectChanges(); // Solo forzar la detección de cambios si el componente sigue activo
+  }
+  deletCommnet(index: number) {
+    this.listComments.splice(index, 1);
+  }
+  editar(index: number): void {
+    this.listComments[index].edit = true;
+
+    setTimeout(() => {
+      const textareasArray = this.commentTextareas.toArray();
+      if (textareasArray[index]) {
+        textareasArray[index].nativeElement.focus();
+      }
+    }, 0);
   }
 }
