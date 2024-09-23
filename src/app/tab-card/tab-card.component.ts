@@ -3,6 +3,8 @@ import {
   Component,
   ElementRef,
   HostListener,
+  OnDestroy,
+  OnInit,
   QueryList,
   ViewChild,
   ViewChildren,
@@ -21,7 +23,7 @@ import {
 } from '@angular/material/progress-spinner';
 import { BadgeModule } from 'primeng/badge';
 import { AvatarModule } from 'primeng/avatar';
-import { fromEvent, Observable, Subscription } from 'rxjs';
+import { debounceTime, fromEvent, Observable, Subscription } from 'rxjs';
 
 /**
  * @title Tab group with asynchronously loading tab contents
@@ -46,28 +48,48 @@ import { fromEvent, Observable, Subscription } from 'rxjs';
     AvatarModule,
   ],
 })
-export class TabCard {
-  resizeObservable: Observable<Event>;
-  resizeSubscription: Subscription;
-  constructor(private cdr: ChangeDetectorRef) {
-    this.resizeObservable = fromEvent(window, 'resize'); // Inicialización de Observable
-    this.resizeSubscription = new Subscription(); // Inicialización de Subscription (vacía por defecto)
+export class TabCard implements OnInit, OnDestroy {
+  resizeSubscription!: Subscription;
 
-    // Ejemplo de suscripción a resizeObservable
-    this.resizeSubscription = fromEvent(window, 'resize').subscribe((event) => {
-      this.onResize(event);
-    });
+  ngOnInit(): void {
+    // Nos suscribimos al evento resize con un debounce para optimizar el rendimiento
+    this.resizeSubscription = fromEvent(window, 'resize')
+      .pipe(debounceTime(200))
+      .subscribe((event) => {
+        const width = (event.target as Window).innerWidth;
+        const height = (event.target as Window).innerHeight;
+        console.log(`Width: ${width}, Height: ${height}`);
+        this.ngDoCheck();
+      });
   }
-  onResize(event: any) {
-    console.log('Window resized:', event);
-    console.log('New width:', window.innerWidth);
-    console.log('New height:', window.innerHeight);
-    this.ngDoCheck();
+
+  ngOnDestroy(): void {
+    // Nos desuscribimos al destruir el componente para evitar fugas de memoria
+    if (this.resizeSubscription) {
+      this.resizeSubscription.unsubscribe();
+    }
   }
-  ngOnDestroy() {
-    // Desuscribirse del evento para evitar fugas de memoria
-    this.resizeSubscription.unsubscribe();
-  }
+  // resizeObservable: Observable<Event>;
+  // resizeSubscription: Subscription;
+  // constructor(private cdr: ChangeDetectorRef) {
+  //   this.resizeObservable = fromEvent(window, 'resize'); // Inicialización de Observable
+  //   this.resizeSubscription = new Subscription(); // Inicialización de Subscription (vacía por defecto)
+
+  //   // Ejemplo de suscripción a resizeObservable
+  //   this.resizeSubscription = fromEvent(window, 'resize').subscribe((event) => {
+  //     this.onResize(event);
+  //   });
+  // }
+  // onResize(event: any) {
+  //   console.log('Window resized:', event);
+  //   console.log('New width:', window.innerWidth);
+  //   console.log('New height:', window.innerHeight);
+  //   this.ngDoCheck();
+  // }
+  // ngOnDestroy() {
+  //   // Desuscribirse del evento para evitar fugas de memoria
+  //   this.resizeSubscription.unsubscribe();
+  // }
   @ViewChild('editableDiv') editableDiv!: ElementRef;
   @ViewChild('commentTextarea') commentTextarea!: ElementRef;
   @ViewChildren('commentTextareas') commentTextareas!: QueryList<ElementRef>;
@@ -229,7 +251,7 @@ export class TabCard {
   }
   ngAfterViewInit() {
     console.log('first');
-    this.cdr.detectChanges(); // Solo forzar la detección de cambios si el componente sigue activo
+    // this.cdr.detectChanges(); // Solo forzar la detección de cambios si el componente sigue activo
   }
 
   ngDoCheck(): void {
