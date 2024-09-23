@@ -52,6 +52,7 @@ export class TabCard implements OnInit, OnDestroy {
   resizeSubscription!: Subscription;
 
   ngOnInit(): void {
+    this.previousLength = this.listComments.length;
     // Nos suscribimos al evento resize con un debounce para optimizar el rendimiento
     this.resizeSubscription = fromEvent(window, 'resize')
       .pipe(debounceTime(200))
@@ -245,18 +246,21 @@ export class TabCard implements OnInit, OnDestroy {
       edit: false,
       height: height,
     });
-    this.previousLength = this.listComments.length;
+    // this.previousLength = this.listComments.length;
     this.contentComment = '';
     this.editableDiv.nativeElement.innerText = '';
   }
   ngAfterViewInit() {
     console.log('first');
+
     // this.cdr.detectChanges(); // Solo forzar la detección de cambios si el componente sigue activo
   }
 
   ngDoCheck(): void {
+    console.log(this.listComments.length);
+    console.log(this.previousLength);
     // Si cambia la longitud de la lista, ajustamos los textareas
-    if (this.listComments.length > 5) {
+    if (this.listComments.length !== this.previousLength) {
       console.log('first');
       this.previousLength = this.listComments.length;
       this.adjustTextareaHeights();
