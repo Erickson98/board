@@ -24,7 +24,9 @@ import {
 import { BadgeModule } from 'primeng/badge';
 import { AvatarModule } from 'primeng/avatar';
 import { debounceTime, fromEvent, Observable, Subscription } from 'rxjs';
-
+import { defaultValueCtx, Editor, rootCtx } from '@milkdown/kit/core';
+import { commonmark } from '@milkdown/kit/preset/commonmark';
+import { nord } from '@milkdown/theme-nord';
 /**
  * @title Tab group with asynchronously loading tab contents
  */
@@ -94,7 +96,9 @@ export class TabCard implements OnInit, OnDestroy {
   @ViewChild('editableDiv') editableDiv!: ElementRef;
   @ViewChild('commentTextarea') commentTextarea!: ElementRef;
   @ViewChildren('commentTextareas') commentTextareas!: QueryList<ElementRef>;
+  @ViewChild('editorRef') editorRef!: ElementRef;
 
+  defaultValue = '# Milkdown x Angular';
   isEditable: boolean = false;
 
   checked = true;
@@ -252,6 +256,14 @@ export class TabCard implements OnInit, OnDestroy {
   }
   ngAfterViewInit() {
     console.log('first');
+    Editor.make()
+      .config((ctx) => {
+        ctx.set(rootCtx, this.editorRef.nativeElement);
+        ctx.set(defaultValueCtx, this.defaultValue);
+      })
+      .config(nord)
+      .use(commonmark)
+      .create();
 
     // this.cdr.detectChanges(); // Solo forzar la detección de cambios si el componente sigue activo
   }
@@ -260,17 +272,20 @@ export class TabCard implements OnInit, OnDestroy {
     console.log(this.listComments.length);
     console.log(this.previousLength);
     // Si cambia la longitud de la lista, ajustamos los textareas
-    if (this.listComments.length !== this.previousLength) {
-      console.log('first');
-      this.previousLength = this.listComments.length;
-      this.adjustTextareaHeights();
-    }
+
+    console.log('first');
+    this.previousLength = this.listComments.length;
+    this.adjustTextareaHeights();
   }
   adjustTextareaHeights(): void {
-    this.commentTextareas.forEach((textareaRef) => {
-      const textarea = textareaRef.nativeElement as HTMLTextAreaElement;
-      this.auto_grow(textarea); // Ajustar la altura automáticamente
-    });
+    try {
+      this.commentTextareas.forEach((textareaRef) => {
+        const textarea = textareaRef.nativeElement as HTMLTextAreaElement;
+        this.auto_grow(textarea); // Ajustar la altura automáticamente
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
   deletCommnet(index: number) {
     this.listComments.splice(index, 1);
