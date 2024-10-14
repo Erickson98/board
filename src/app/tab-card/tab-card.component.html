@@ -197,7 +197,9 @@
             </div>
             <div style="display: flex; flex-wrap: wrap">
               <div style="display: flex; flex-grow: 1; max-width: 100%">
-                <textarea
+                 
+                <!--
+                <div
                   (keydown)="onKeyDownTextArea($event, $index)"
                   #commentTextareas
                   [ngStyle]="{ 'height.px': item.height }"
@@ -210,9 +212,20 @@
                     'editable-background': item.edit,
                     'no-focus-textaree': !item.edit
                   }"
-                  [readonly]="!item.edit"
                 >
-                </textarea>
+                  {{ item.comment }}
+                </div> -->
+                <div
+                  [ngClass]="{
+                    'text-area-for-comments': true,
+                    'editable-background': item.edit,
+                    'no-focus-textaree': !item.edit
+                  }"
+                #commentTextareas
+                 >{{item.comment}}</div>
+                <!-- editor.component.html -->
+                <p id="referenceElement"></p>
+
               </div>
               <!-- <textarea
                 *ngIf="!isTaskSubmitted"

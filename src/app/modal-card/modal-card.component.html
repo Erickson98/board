@@ -49,19 +49,32 @@
     <div>
       <p>Etiquetas</p>
       <div style="display: flex; gap: 4px; flex-wrap: wrap">
-        <span class="tags"></span>
-        <span class="tags">diseño</span>
-        <span class="tags">mejoras</span>
-        <span class="tags"> </span>
-        <span class="tags"></span>
-        <span class="tags">Implementacion</span>
-        <span class="tags"></span>
+        @for (item of implemantation; track $index) {
+            <span class="tags">{{item}}</span>
+        }
+        
+       
         <p-avatar
           image="../assets/add icon.svg"
           shape="circle"
           class="bottom-card-iconAvatar plus-button"
           matTooltip="dsd"
+          
         />
+        <ul class="fmenu" id="mymenu">
+          <li class="fmenu-item">
+            <div class="trigger-menu expanded">
+              <i class="fa-regular fa-circle-user"></i>
+              <span class="text">Hello, Lionel</span>
+            </div>
+            <ul class="floating-menu">
+              <li><a href='#'><i class="fa-regular fa-address-card"></i>Profile</a></li>
+              <li><a href='#'><i class="fa-regular fa-comment-dots"></i>Contact support</a></li>
+              <li><a href='#'><i class="fa-regular fa-money-bill-1"></i>Transactions</a></li>
+              <li><a href='#'><i class="fa-solid fa-right-from-bracket"></i>Logout</a></li>
+            </ul>
+          </li>
+        </ul>
       </div>
     </div>
     w

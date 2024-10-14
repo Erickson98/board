@@ -9,6 +9,7 @@ import {
   MatDialogClose,
 } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import {MatMenuModule} from '@angular/material/menu';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -16,11 +17,14 @@ import { DragDrop } from '../drag-drop/drag-drop.component';
 import { AvatarModule } from 'primeng/avatar';
 import { MatIconModule } from '@angular/material/icon';
 import { TabCard } from '../tab-card/tab-card.component';
-
+import { MenuModule } from 'primeng/menu';
+import { ButtonModule } from 'primeng/button';
+import { MenuItem } from 'primeng/api'; 
+import {sikFloatingMenu} from '../services/menu-show'
 @Component({
   selector: 'modal-card',
   templateUrl: 'modal-card.component.html',
-  styleUrl: 'modal-card.component.css',
+  styleUrls: ['./modal-card.component.css', './modal-card.component.scss'],
   standalone: true,
   imports: [
     MatFormFieldModule,
@@ -33,11 +37,20 @@ import { TabCard } from '../tab-card/tab-card.component';
     MatDialogClose,
     AvatarModule,
     MatIconModule,
-    TabCard,
+    TabCard, 
+    MatMenuModule,
+    MenuModule,
+    ButtonModule
   ],
 })
 export class ModalCard {
   constructor(public dialogRef: MatDialogRef<DragDrop>) {}
+
+  implemantation = ["dsdd","imple","dsal;k","d;lsadla","dlsajdalskdj lksad j"]
+
+  addTag():void{
+    
+  }
 
   onNoClick(): void {
     this.dialogRef.close();
@@ -61,7 +74,24 @@ export class ModalCard {
     context.drawImage(img, 0, 0, 1, 1);
     return context.getImageData(0, 0, 1, 1).data.slice(0, 3);
   }
+  items: MenuItem[] | undefined;
   ngOnInit(): void {
+    const menu = new sikFloatingMenu("#mymenu"); 
+     this.items = [
+            {
+                label: 'Options',
+                items: [
+                    {
+                        label: 'Refresh',
+                      
+                    },
+                    {
+                        label: 'Export',
+                      
+                    }
+                ]
+            }
+        ];
     // Función getColor llamada cuando la imagen ha cargado completamente
     const image = document.querySelector('img') as HTMLImageElement;
     if (image != null) {

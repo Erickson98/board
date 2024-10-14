@@ -1,0 +1,143 @@
+/**********************************************
+Just for the pen:
+***********************************************/
+
+ 
+
+
+/*********************************************
+Floating Menu:
+**********************************************/
+$fmenu-size : 3rem !default;
+$fmenu-bg : #505050 !default;
+$fmenu-color-base : #fff !default;
+$fmenu-color-hover : #ffd53e !default;
+$fmenu-item-space : 1rem !default;
+$fmenu-item-label-size : 1rem !default;
+$fmenu-item-expand-speed : .4s !default;
+$fmenu-item-color-speed : .3s !default;
+
+$fmenu-list-max-width : 250px !default;
+$fmenu-list-font-size : .85rem !default;
+$fmenu-list-border-sep : 1px solid rgba(0, 0, 0, .15) !default;
+$fmenu-list-hover-color : #ffd53e !default;
+
+$fmenu-list-expand-speed : .6s !default;
+$fmenu-list-opacity-speed : .3s !default;
+
+ul.fmenu {
+    color: $fmenu-color-base;
+    display: inline-block;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    white-space: nowrap;
+
+    >li.fmenu-item {
+        display: inline-block;
+        margin-right: $fmenu-item-space;
+        position: relative;
+    }
+
+    .trigger-menu {
+
+        $fmenu-item-icon-size : $fmenu-size * 0.5;
+        $fmenu-item-padding : $fmenu-size * 0.3;
+        $fmenu-item-icon-margin : $fmenu-size * 0.195 / 2;
+
+        display: flex;
+        align-content: center;
+        align-items: center;
+        box-sizing: border-box;
+        min-width: $fmenu-size;
+        max-width: $fmenu-size;
+        height: $fmenu-size;
+        border: ($fmenu-item-padding / 2) solid transparent;
+        border-radius: $fmenu-size;
+        overflow: hidden;
+        text-align: center;
+        background-color: $fmenu-bg;
+        cursor: pointer;
+        transition: max-width ease $fmenu-item-expand-speed;
+
+        i {
+            display: block;
+            margin: 0 $fmenu-item-icon-margin;
+            color: white;
+            font-size: $fmenu-item-icon-size;
+            transition: color ease $fmenu-item-color-speed;
+        }
+
+        span {
+            display: block;
+            font-size: $fmenu-item-label-size;
+            padding: 0 1ch;
+        }
+
+        &.expanded {
+            max-width: unset !important;
+        }
+
+        &.open {
+            i {
+                color: $fmenu-color-hover
+            }
+        }
+
+        &:hover:not(.expanded) {
+            i {
+                color: $fmenu-color-hover
+            }
+        }
+    }
+
+    .floating-menu {
+    display: block;
+        position: fixed;
+        /* Change to fixed to keep it always visible */
+        top: 0;
+        /* Align the floating menu at the top */
+        left: 0;
+        /* Adjust based on your desired alignment */
+        min-width: 100%;
+        max-width: $fmenu-list-max-width;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        background-color: $fmenu-bg;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        max-height: 0px;
+        z-index: 9999;
+        /* Set a high z-index value to keep it on top */
+        opacity: 0;
+        transition: max-height ease $fmenu-list-expand-speed,
+            opacity ease $fmenu-list-opacity-speed;
+
+        >li {
+            padding: 0 0.5rem;
+
+            a {
+                color: $fmenu-color-base;
+                font-size: $fmenu-list-font-size;
+                text-decoration: none;
+                display: block;
+                padding: 0.75rem 0.5rem;
+
+                i {
+                    margin-right: 1ch;
+                }
+
+                &:hover {
+                    color: $fmenu-list-hover-color;
+                }
+            }
+        }
+
+        >li:not(:last-child) {
+            a {
+                border-bottom: $fmenu-list-border-sep;
+            }
+        }
+    }
+}
