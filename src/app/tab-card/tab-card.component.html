@@ -200,7 +200,7 @@
                 <textarea
                   (keydown)="onKeyDownTextArea($event, $index)"
                   #commentTextareas
-                  [ngStyle]="{ 'height.px': item.height, display: 'none' }"
+                  [ngStyle]="{ 'height.px': item.height,  }"
                   *ngIf="!isTaskSubmitted"
                   [(ngModel)]="item.comment"
                   placeholder="Hacer comentario..."
@@ -213,31 +213,7 @@
                   [readonly]="!item.edit"
                 >
                 </textarea>
-                <div
-                  (keydown)="onKeyDownTextArea($event, $index)"
-                  #commentTextareas
-                  [ngStyle]="{ 'height.px': item.height }"
-                  *ngIf="!isTaskSubmitted"
-                  [(ngModel)]="item.comment"
-                  placeholder="Hacer comentario..."
-                  (input)="auto_grow($event.target)"
-                  [ngClass]="{
-                    'text-area-for-comments': true,
-                    'editable-background': item.edit,
-                    'no-focus-textaree': !item.edit
-                  }"
-                >
-                  {{ item.comment }}
-                </div>
-                <div #editorRef></div>
               </div>
-              <!-- <textarea
-                *ngIf="!isTaskSubmitted"
-                [(ngModel)]="item.comment"
-                placeholder="Hacer comentario..."
-                (input)="auto_grow($event.target)"
-                ngClass="text-area-for-comments"
-              ></textarea> -->
             </div>
           </div>
         </div>

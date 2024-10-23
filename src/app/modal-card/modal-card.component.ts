@@ -39,6 +39,32 @@ import { TabCard } from '../tab-card/tab-card.component';
 export class ModalCard {
   constructor(public dialogRef: MatDialogRef<DragDrop>) {}
 
+  openMenu(): void {
+    const menuButton = document.getElementById('menuButton');
+    if (menuButton === null) {
+      return;
+    }
+    menuButton.addEventListener('click', function () {
+      const floatingMenu = document.getElementById('floatingMenu');
+      if (floatingMenu === null) {
+        return;
+      }
+      if (
+        floatingMenu.style.display === 'none' ||
+        floatingMenu.style.display === ''
+      ) {
+        // Display the menu
+        floatingMenu.style.display = 'block';
+        floatingMenu.style.position = 'absolute';
+        floatingMenu.style.top = `${this.offsetTop + this.offsetHeight + 10}px`; // Position below the button
+        floatingMenu.style.left = `${this.offsetLeft}px`; // Align with the button
+      } else {
+        // Hide the menu
+        floatingMenu.style.display = 'none';
+      }
+    });
+  }
+
   onNoClick(): void {
     this.dialogRef.close();
   }

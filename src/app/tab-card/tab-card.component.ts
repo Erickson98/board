@@ -24,9 +24,6 @@ import {
 import { BadgeModule } from 'primeng/badge';
 import { AvatarModule } from 'primeng/avatar';
 import { debounceTime, fromEvent, Observable, Subscription } from 'rxjs';
-import { defaultValueCtx, Editor, rootCtx } from '@milkdown/kit/core';
-import { commonmark } from '@milkdown/kit/preset/commonmark';
-import { nord } from '@milkdown/theme-nord';
 /**
  * @title Tab group with asynchronously loading tab contents
  */
@@ -256,14 +253,6 @@ export class TabCard implements OnInit, OnDestroy {
   }
   ngAfterViewInit() {
     console.log('first');
-    Editor.make()
-      .config((ctx) => {
-        ctx.set(rootCtx, this.editorRef.nativeElement);
-        ctx.set(defaultValueCtx, this.defaultValue);
-      })
-      .config(nord)
-      .use(commonmark)
-      .create();
 
     // this.cdr.detectChanges(); // Solo forzar la detección de cambios si el componente sigue activo
   }
