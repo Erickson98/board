@@ -308,3 +308,16 @@ h2.input-title-cards {
 .plus-icon{
     background-color: #006eff;
 }
+
+.button-delete-card {
+    display: none;
+    position: absolute;
+    right: 0%;
+}
+
+.example-box:hover .button-delete-card {
+    display: block;
+    background-color: lightgray;
+    color: black;
+    cursor: pointer;
+}
