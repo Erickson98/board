@@ -1012,6 +1012,38 @@ export class DragDrop implements AfterViewInit {
       this.updateColumHandler(col.position, col);
     }
   }
+  deleteColumn(col: any, event: MouseEvent) {
+    event.stopPropagation();
+
+    if (this.db === null) {
+      return;
+    }
+    const transaction = this.db.transaction(['Columnas'], 'readwrite');
+    const columnasStore = transaction.objectStore('Columnas');
+    const index = columnasStore.index('position');
+    const request = index.openCursor(IDBKeyRange.only(col.position));
+
+    request.onsuccess = (event) => {
+      const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+      if (cursor) {
+        const deleteRequest = cursor.delete();
+        deleteRequest.onsuccess = () => {
+          console.log('Column deleted successfully');
+          // Actualiza la lista local de columnas si es necesario
+          this.columnList = this.columnList.filter(
+            (c) => c.position !== col.position
+          );
+        };
+        deleteRequest.onerror = (error) => {
+          console.error('Error deleting column:', error);
+        };
+      }
+    };
+
+    request.onerror = (event) => {
+      console.error('Error finding column:', event);
+    };
+  }
 
   private selectText(element: HTMLElement): void {
     if (window.getSelection && document.createRange) {
