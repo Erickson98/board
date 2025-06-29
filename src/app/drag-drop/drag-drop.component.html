@@ -89,7 +89,15 @@
     @for (col of columnList; track col;let idx = $index) {
     <div>
       <div class="example-container">
-        <div cdkDragLockAxis="x" cdkDrag>
+        <div class="title-container" cdkDragLockAxis="x" cdkDrag>
+          <div style="position: relative">
+            <button
+              class="button-delete-title"
+              (click)="onDeleteCard(col, data, $event)"
+            >
+              X
+            </button>
+          </div>
           @if (col.titleEditable) {
 
           <textarea

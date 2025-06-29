@@ -74,8 +74,6 @@ interface Column {
 })
 export class DragDrop implements AfterViewInit {
   isClickAvatarGroup: boolean = false;
-  refButtonDeleteCardActivated: HTMLButtonElement | null =
-    document.querySelector('.button-delete-card');
   data: string[] = [];
   todo = [
     'Cargar los datos y rellenar el board',

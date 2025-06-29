@@ -321,3 +321,16 @@ h2.input-title-cards {
     color: black;
     cursor: pointer;
 }
+
+.button-delete-title {
+    display: none;
+    position: absolute;
+    right: 0%;
+}
+
+.title-container:hover .button-delete-title {
+    display: block;
+    background-color: lightgray;
+    color: black;
+    cursor: pointer;
+}
