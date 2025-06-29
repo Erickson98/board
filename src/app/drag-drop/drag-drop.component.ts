@@ -74,6 +74,8 @@ interface Column {
 })
 export class DragDrop implements AfterViewInit {
   isClickAvatarGroup: boolean = false;
+  refButtonDeleteCardActivated: HTMLButtonElement | null =
+    document.querySelector('.button-delete-card');
   data: string[] = [];
   todo = [
     'Cargar los datos y rellenar el board',
@@ -1002,6 +1004,17 @@ export class DragDrop implements AfterViewInit {
     console.log(event);
     // this.selectText(this.element.nativeElement);
   }
+
+  onDeleteCard(col: any, data: any, event: MouseEvent) {
+    event.stopPropagation();
+
+    const index = col.data.indexOf(data);
+    if (index !== -1) {
+      col.data.splice(index, 1);
+      this.updateColumHandler(col.position, col);
+    }
+  }
+
   private selectText(element: HTMLElement): void {
     if (window.getSelection && document.createRange) {
       const selection = window.getSelection(); // Obtiene la selección actual

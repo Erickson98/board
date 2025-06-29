@@ -138,7 +138,12 @@
           } @else{
           <div class="example-box" cdkDrag (click)="onClickOnCard(col, $event)">
             <div style="position: relative">
-              <button class="button-delete-card">X</button>
+              <button
+                class="button-delete-card"
+                (click)="onDeleteCard(col, data, $event)"
+              >
+                X
+              </button>
             </div>
             <img
               mat-card-image
