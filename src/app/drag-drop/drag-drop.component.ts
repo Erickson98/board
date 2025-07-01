@@ -401,33 +401,50 @@ export class DragDrop implements AfterViewInit {
 
     request.onupgradeneeded = (event) => {
       this.db = (event.target as IDBOpenDBRequest).result;
-      console.log('Database opened successfully', this.db);
+      console.log('Database upgrade / creation triggered');
 
-      // Crear almacén de objetos para "Columnas"
       const columnasStore = this.db.createObjectStore('Columnas', {
         keyPath: 'id',
         autoIncrement: true,
       });
 
-      // Crear índice en "Columnas"
       columnasStore.createIndex('name', 'name', { unique: false });
       columnasStore.createIndex('position', 'position', { unique: false });
 
-      // Crear almacén de objetos para "Comments"
       const commentsStore = this.db.createObjectStore('Comments', {
         keyPath: 'id',
         autoIncrement: true,
       });
-      // this.initializeData(this.db);
+
+      // Puedes llamar aquí this.initializeData(this.db) si quieres inicializar datos por primera vez
     };
 
     request.onsuccess = (event) => {
       this.db = (event.target as IDBOpenDBRequest).result;
-      console.log(this.db);
-      this.checkAndInitializeData(this.db);
-      // this.getAllColumns(this.db);
-      this.searchColumnsByName();
       console.log('Database initialized successfully');
+
+      const transaction = this.db.transaction('Columnas', 'readonly');
+      const store = transaction.objectStore('Columnas');
+      const countRequest = store.count();
+
+      countRequest.onsuccess = () => {
+        const count = countRequest.result;
+        console.log(`Columnas store has ${count} records`);
+        if (this.db === null) {
+          return;
+        }
+        if (count > 0) {
+          // Cargar columnas existentes
+          this.getAllColumns(this.db!);
+        } else {
+          // Si está vacío, inicializar datos
+          this.initializeData(this.db!);
+        }
+      };
+
+      countRequest.onerror = () => {
+        console.error('Error checking Columnas store');
+      };
     };
 
     request.onerror = (event) => {
@@ -544,8 +561,8 @@ export class DragDrop implements AfterViewInit {
       } else {
         console.log('All columns:', allColumns);
         // Aquí puedes actualizar el estado de tu componente o realizar otras acciones con los datos
+        this.columnList = allColumns;
       }
-      // this.columnList = allColumns;
       console.log(allColumns);
     };
 
@@ -1089,46 +1106,9 @@ export class DragDrop implements AfterViewInit {
       this.replaceAllColumns(this.columnList);
     }
   }
-  dropCol(event: CdkDragDrop<any>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    }
-  }
 
   dropHorizontal(event: CdkDragDrop<any>) {
-    // if (event.previousContainer === event.container) {
-    //   moveItemInArray(this.columnList, event.previousIndex, event.currentIndex);
-    // } else {
-    //   transferArrayItem(
-    //     event.previousContainer.data,
-    //     event.container.data,
-    //     event.previousIndex,
-    //     event.currentIndex
-    //   );
-    // }
-    console.log(this.columnList);
     moveItemInArray(this.columnList, event.previousIndex, event.currentIndex);
     this.replaceAllColumns(this.columnList);
-    // this.replaceAllColumns(this.columnList);
-
-    // console.log(this.columnList);
-    // this.columnList.map((x, index) => {
-    //   console.log(index + 1);
-    //   x.position = index + 1;
-    //   console.log(x.name);
-    //   console.log(x.position);
-    // });
-    // this.replaceAllColumns(this.columnList);
   }
 }
