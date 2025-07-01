@@ -179,6 +179,8 @@ export class DragDrop implements AfterViewInit {
 
   @HostListener('document:click', ['$event'])
   clickout(event: Event) {
+    //TODO hacer un metodo exclusivo para cuadno se agregue una columna
+    event.preventDefault();
     const clickedInside = this.eRef.nativeElement.contains(event.target);
 
     const titleCard = this.eRef.nativeElement.querySelector('#titleCard');
@@ -230,11 +232,11 @@ export class DragDrop implements AfterViewInit {
       this.cdr.detectChanges();
     }
 
-    if (titleCard2.contains(event.target)) {
+    if (titleCard2?.contains(event.target)) {
       console.log('first');
     }
     console.log(event.target);
-    if (!titleCard.contains(event.target) && clickedInside) {
+    if (!titleCard?.contains(event.target) && clickedInside) {
       console.log('first');
       if (titleCard2.contains(event.target)) {
         console.log('first');
@@ -416,7 +418,7 @@ export class DragDrop implements AfterViewInit {
         keyPath: 'id',
         autoIncrement: true,
       });
-      this.initializeData(this.db);
+      // this.initializeData(this.db);
     };
 
     request.onsuccess = (event) => {
@@ -491,7 +493,7 @@ export class DragDrop implements AfterViewInit {
     request.onsuccess = () => {
       if (request.result === 0) {
         // Si no hay datos en la base de datos, inicializar
-        this.initializeData(db);
+        //this.initializeData(db);
       } else {
         console.log(
           'Data already exists in the database. No need to initialize.'
@@ -672,6 +674,7 @@ export class DragDrop implements AfterViewInit {
     const request = store.add(column);
 
     request.onsuccess = () => {
+      // agregar aqui que se agregue tambien en el indexdb
       console.log('Columna añadida con ID:', request);
       this.columnList.push({
         id: request.result as number,
@@ -810,34 +813,46 @@ export class DragDrop implements AfterViewInit {
       return;
     }
 
-    const transaction: IDBTransaction = this.db.transaction(
-      ['Columnas'],
-      'readwrite'
-    );
-    const columnasStore: IDBObjectStore = transaction.objectStore('Columnas');
+    // Paso 1: Borrar columnas existentes
+    const clearTx = this.db.transaction(['Columnas'], 'readwrite');
+    const storeToClear = clearTx.objectStore('Columnas');
 
-    // Step 1: Clear all existing columns
-    const clearRequest: any = columnasStore.clear();
+    const clearRequest = storeToClear.clear();
 
     clearRequest.onsuccess = () => {
-      // Step 2: Insert new columns
+      console.log('All columns cleared.');
+      if (!this.db) {
+        console.error('Database not initialized');
+        return;
+      }
+      // Paso 2: Insertar nuevas columnas en una nueva transacción
+      const insertTx = this.db.transaction(['Columnas'], 'readwrite');
+      const storeToInsert = insertTx.objectStore('Columnas');
+
       newColumns.forEach((column, index) => {
-        const addRequest: IDBRequest<IDBValidKey> = columnasStore.add({
-          ...column,
-        });
+        delete column['id'];
+        const addRequest = storeToInsert.add(column);
 
         addRequest.onsuccess = () => {
-          console.log(`New column ${index} added successfully`, column);
+          console.log(`Column ${index} added successfully`, column);
         };
 
-        addRequest.onerror = (error: Event) => {
-          console.error(`Error adding new column ${index}:`, error);
+        addRequest.onerror = (error) => {
+          console.error(`Error adding column ${index}:`, error);
         };
       });
+
+      insertTx.oncomplete = () => {
+        console.log('All new columns inserted successfully');
+      };
+
+      insertTx.onerror = (event) => {
+        console.error('Error during insertion transaction:', event);
+      };
     };
 
-    clearRequest.onerror = (error: Event) => {
-      console.error('Error deleting all columns:', error);
+    clearRequest.onerror = (event: Event) => {
+      console.error('Failed to clear existing columns:', event);
     };
   }
 
@@ -1058,9 +1073,6 @@ export class DragDrop implements AfterViewInit {
   }
   drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
-      console.log(event.container.data);
-      console.log(event.previousIndex);
-      console.log(event.currentIndex);
       moveItemInArray(
         event.container.data,
         event.previousIndex,
@@ -1068,11 +1080,6 @@ export class DragDrop implements AfterViewInit {
       );
       this.replaceAllColumns(this.columnList);
     } else {
-      console.log(event.item.element.nativeElement.innerHTML);
-      console.log(event.previousContainer.data);
-      console.log(event.container.data);
-      console.log(event.previousIndex);
-      console.log(event.currentIndex);
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
@@ -1084,20 +1091,12 @@ export class DragDrop implements AfterViewInit {
   }
   dropCol(event: CdkDragDrop<any>) {
     if (event.previousContainer === event.container) {
-      console.log(event.container.data);
-      console.log(event.previousIndex);
-      console.log(event.currentIndex);
       moveItemInArray(
         event.container.data,
         event.previousIndex,
         event.currentIndex
       );
     } else {
-      console.log(event.item.element.nativeElement.innerHTML);
-      console.log(event.previousContainer.data);
-      console.log(event.container.data);
-      console.log(event.previousIndex);
-      console.log(event.currentIndex);
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
@@ -1108,7 +1107,21 @@ export class DragDrop implements AfterViewInit {
   }
 
   dropHorizontal(event: CdkDragDrop<any>) {
+    // if (event.previousContainer === event.container) {
+    //   moveItemInArray(this.columnList, event.previousIndex, event.currentIndex);
+    // } else {
+    //   transferArrayItem(
+    //     event.previousContainer.data,
+    //     event.container.data,
+    //     event.previousIndex,
+    //     event.currentIndex
+    //   );
+    // }
+    console.log(this.columnList);
     moveItemInArray(this.columnList, event.previousIndex, event.currentIndex);
+    this.replaceAllColumns(this.columnList);
+    // this.replaceAllColumns(this.columnList);
+
     // console.log(this.columnList);
     // this.columnList.map((x, index) => {
     //   console.log(index + 1);
