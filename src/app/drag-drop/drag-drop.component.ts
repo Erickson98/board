@@ -17,6 +17,7 @@ import {
   CdkDropListGroup,
   CdkDragStart,
   CdkDragHandle,
+  CdkDragMove,
 } from '@angular/cdk/drag-drop';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -33,7 +34,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ModalCard } from '../modal-card/modal-card.component';
 import { MatDialog } from '@angular/material/dialog';
-
 /**
  * @title Drag&Drop connected sorting
  */
@@ -167,7 +167,44 @@ export class DragDrop implements AfterViewInit {
   onEnterPressed(id: number) {
     this.changeTitle(id);
   }
+  //logic for mv5
+  private autoScrollInterval: any = null;
+  private scrollSpeed = 0;
 
+  onDragMoved(event: CdkDragMove<any>) {
+    const threshold = 60;
+    const x = event.pointerPosition.x;
+    const windowWidth = window.innerWidth;
+
+    if (x < threshold) {
+      this.scrollSpeed = -this.calculateSpeed(threshold - x);
+      this.startAutoScroll();
+    } else if (x > windowWidth - threshold) {
+      this.scrollSpeed = this.calculateSpeed(x - (windowWidth - threshold));
+      this.startAutoScroll();
+    } else {
+      this.stopAutoScroll();
+    }
+  }
+
+  private calculateSpeed(distance: number): number {
+    return Math.min(15, distance / 5);
+  }
+
+  private startAutoScroll(): void {
+    if (this.autoScrollInterval) return;
+
+    this.autoScrollInterval = setInterval(() => {
+      window.scrollBy(this.scrollSpeed, 0);
+    }, 16);
+  }
+
+  stopAutoScroll(): void {
+    clearInterval(this.autoScrollInterval);
+    this.autoScrollInterval = null;
+    this.scrollSpeed = 0;
+  }
+  //
   onInputChange() {
     console.log('Nombre actualizado:', this.nombre);
     this.cdr.detectChanges();

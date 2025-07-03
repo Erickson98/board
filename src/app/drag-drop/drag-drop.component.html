@@ -144,7 +144,14 @@
           />
 
           } @else{
-          <div class="example-box" cdkDrag (click)="onClickOnCard(col, $event)">
+          <div
+            class="example-box"
+            cdkDrag
+            (click)="onClickOnCard(col, $event)"
+            (cdkDragMoved)="onDragMoved($event)"
+            (cdkDragReleased)="stopAutoScroll()"
+            (cdkDragEnded)="stopAutoScroll()"
+          >
             <div style="position: relative">
               <button
                 class="button-delete-card"
