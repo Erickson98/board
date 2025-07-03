@@ -89,7 +89,14 @@
     @for (col of columnList; track col;let idx = $index) {
     <div>
       <div class="example-container">
-        <div class="title-container" cdkDragLockAxis="x" cdkDrag>
+        <div
+          class="title-container"
+          cdkDragLockAxis="x"
+          cdkDrag
+          (cdkDragMoved)="onDragMoved($event)"
+          (cdkDragReleased)="stopAutoScroll()"
+          (cdkDragEnded)="stopAutoScroll()"
+        >
           <div style="position: relative">
             <button
               class="button-delete-title"
