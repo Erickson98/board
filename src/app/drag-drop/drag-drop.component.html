@@ -1,304 +1,237 @@
-<!-- <div cdkDropListGroup class="board" (click)="onBoardClick()">
-  @for (col of columnList; track col;let idx = $index) {
-  <div class="example-container">
-    <div class="example-container">
-      <h2>{{ col.name }}</h2>
-      <div
-        cdkDropList
-        [cdkDropListData]="col.data"
-        class="example-list"
-        (cdkDropListDropped)="drop($event)"
-      >
-        @for (data of col.data; track data) {
-
-        <div class="example-box" cdkDrag>
-          @if (data === "") {
-
-          <input
-            #nameInput
-            class="example-box input-name-card"
-            [(ngModel)]="nombre"
-            placeholder="Escribe tu nombre"
-            cdkDrag
-          />
-
-          } @else{
-          {{ data }}
-
-          }
-        </div>
-
-        }
-      </div>
-
-      <div *ngIf="col.estado; else saveButton">
-        <button
-          class="button-transparent button-add-card"
-          (click)="addCard(col.data, col.estado, col.name, idx)"
-        >
-          <mat-icon
-            aria-hidden="false"
-            aria-label="Example home icon"
-            fontIcon="add"
-          ></mat-icon>
-          <p>Añadir una tarjeta</p>
-        </button>
-      </div>
-      <ng-template #saveButton>
-        <div style="display: flex; width: 100%">
-          <button
-            id="card"
-            class="button-transparent button-add-card"
-            (click)="saveCard(col.data, true, idx)"
-          >
-            <mat-icon
-              aria-hidden="false"
-              aria-label="Example home icon"
-              fontIcon="save"
-            ></mat-icon>
-            <p>Guardar tarjeta</p>
-          </button>
-          <button
-            class="button-transparent button-add-card"
-            (click)="avoidAddCard(col.data, idx)"
-          >
-            <mat-icon
-              aria-hidden="false"
-              aria-label="Example home icon"
-              fontIcon="close"
-            ></mat-icon>
-          </button>
-        </div>
-      </ng-template>
-    </div>
-  </div>
-  }
-
- 
-</div> -->
-<div>
-  <div
-    cdkDropListGroup
-    cdkDropList
-    cdkDropListOrientation="horizontal"
-    class="board"
-    (click)="onBoardClick($event)"
-    (cdkDropListDropped)="dropHorizontal($event)"
-    id="scroll-container"
-  >
-    @for (col of columnList; track col;let idx = $index) {
+<div class="scroll-container">
+  <!-- <div class="sticky-horizontal">Sticky</div> -->
+  <header class="sticky-horizontal"></header>
+  <div class="content">
     <div>
-      <div class="example-container">
-        <div
-          class="title-container"
-          cdkDragLockAxis="x"
-          cdkDrag
-          (cdkDragMoved)="onDragMoved($event)"
-          (cdkDragReleased)="stopAutoScroll()"
-          (cdkDragEnded)="stopAutoScroll()"
-        >
-          <div style="position: relative">
-            <button
-              class="button-delete-title"
-              (click)="deleteColumn(col, $event)"
+      <div
+        cdkDropListGroup
+        cdkDropList
+        cdkDropListOrientation="horizontal"
+        class="board"
+        (click)="onBoardClick($event)"
+        (cdkDropListDropped)="dropHorizontal($event)"
+        id="scroll-container"
+      >
+        @for (col of columnList; track col;let idx = $index) {
+        <div>
+          <div class="example-container">
+            <div
+              class="title-container"
+              cdkDragLockAxis="x"
+              cdkDrag
+              (cdkDragMoved)="onDragMoved($event)"
+              (cdkDragReleased)="stopAutoScroll()"
+              (cdkDragEnded)="stopAutoScroll()"
             >
-              X
-            </button>
-          </div>
-          @if (col.titleEditable) {
+              <div style="position: relative">
+                <button
+                  class="button-delete-title"
+                  (click)="deleteColumn(col, $event)"
+                >
+                  X
+                </button>
+              </div>
+              @if (col.titleEditable) {
 
-          <textarea
-            id="titleCard"
-            #textarea
-            (enterPressed)="onEnterPressed(col.id)"
-            appAutoResize
-            [externalHeight]="externalHeight"
-            [(ngModel)]="col.name"
-            maxlength="512"
-            dir="auto"
-            style="font-weight: 900"
-            class="input-title-cards auto-resize"
-            >{{ col.name }}</textarea
-          >
-          } @else {
-          <h2
-            id="h2Title"
-            #header
-            role="textbox"
-            class="input-title-cards"
-            style="cursor: pointer"
-            (click)="changeTitle(col.id, $event)"
-          >
-            {{ col.name }}
-          </h2>
-          }
-        </div>
-        <div
-          cdkDropList
-          [cdkDropListData]="col.data"
-          class="example-list"
-          (cdkDropListDropped)="drop($event)"
-        >
-          @for (data of col.data; track data) { @if (data === "") {
-
-          <input
-            #nameInput
-            class="example-box input-name-card"
-            [(ngModel)]="nombre"
-            (ngModelChange)="onInputChange()"
-            (keydown.enter)="saveCard(col.data, idx, col.id)"
-            placeholder="Escribe tu nombre"
-          />
-
-          } @else{
-          <div
-            class="example-box"
-            cdkDrag
-            (click)="onClickOnCard(col, $event)"
-            (cdkDragMoved)="onDragMoved($event)"
-            (cdkDragReleased)="stopAutoScroll()"
-            (cdkDragEnded)="stopAutoScroll()"
-          >
-            <div style="position: relative">
-              <button
-                class="button-delete-card"
-                (click)="onDeleteCard(col, data, $event)"
+              <textarea
+                id="titleCard"
+                #textarea
+                (enterPressed)="onEnterPressed(col.id)"
+                appAutoResize
+                [externalHeight]="externalHeight"
+                [(ngModel)]="col.name"
+                maxlength="512"
+                dir="auto"
+                style="font-weight: 900"
+                class="input-title-cards auto-resize"
+                >{{ col.name }}</textarea
               >
-                X
-              </button>
+              } @else {
+              <h2
+                id="h2Title"
+                #header
+                role="textbox"
+                class="input-title-cards"
+                style="cursor: pointer"
+                (click)="changeTitle(col.id, $event)"
+              >
+                {{ col.name }}
+              </h2>
+              }
             </div>
-            <img
-              mat-card-image
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/800px-Unofficial_JavaScript_logo_2.svg.png"
-              alt="Photo of a Shiba Inu"
-              style="border-radius: 8px"
-            />
-            <div>
-              <button style="border-radius: 5px; margin-right: 2px">
-                Wirefram
-              </button>
-              <button style="border-radius: 5px; margin-right: 2px">UI</button>
-            </div>
-            {{ data }}
-            <div class="subtasks">
-              <div>Subtasks</div>
-              <div>1/3</div>
-            </div>
-            <mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
-            <div class="bottom-card">
-              <p-avatarGroup styleClass="mb-3">
-                <p-avatar
-                  pButton
-                  image="https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png"
-                  shape="circle"
-                  class="bottom-card-iconAvatar"
-                  matTooltip="data.name"
-                />
-                <p-avatar
-                  pButton
-                  image="https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png"
-                  shape="circle"
-                  class="bottom-card-iconAvatar"
-                  matTooltip="data.name"
-                />
-                <p-avatar
-                  image="../assets/add icon.svg"
-                  shape="circle"
-                  class="bottom-card-iconAvatar plus-button"
-                  (click)="actionProfile($event)"
-                  matTooltip="dsd"
-                />
-              </p-avatarGroup>
-              <div mat-card-avatar class="example-header-image"></div>
+            <div
+              cdkDropList
+              [cdkDropListData]="col.data"
+              class="example-list"
+              (cdkDropListDropped)="drop($event)"
+            >
+              @for (data of col.data; track data) { @if (data === "") {
 
-              <div class="information-card">
-                <mat-icon
-                  aria-hidden="false"
-                  aria-label="Example home icon"
-                  fontIcon="attach_file"
-                  class="information-card-detail size-icon"
-                ></mat-icon>
-                <div class="information-card-detail">1</div>
-                <mat-icon
-                  aria-hidden="false"
-                  aria-label="Example home icon"
-                  fontIcon="chat"
-                  class="information-card-detail size-icon"
-                ></mat-icon>
-                <div class="information-card-detail">1</div>
-                <mat-icon
-                  aria-hidden="false"
-                  aria-label="Example home icon"
-                  fontIcon="schedule"
-                  class="information-card-detail size-icon"
-                ></mat-icon>
-                <div class="information-card-detail">8 d</div>
+              <input
+                #nameInput
+                class="example-box input-name-card"
+                [(ngModel)]="nombre"
+                (ngModelChange)="onInputChange()"
+                (keydown.enter)="saveCard(col.data, idx, col.id)"
+                placeholder="Escribe tu nombre"
+              />
+
+              } @else{
+              <div
+                class="example-box"
+                cdkDrag
+                (click)="onClickOnCard(col, $event)"
+                (cdkDragMoved)="onDragMoved($event)"
+                (cdkDragReleased)="stopAutoScroll()"
+                (cdkDragEnded)="stopAutoScroll()"
+              >
+                <div style="position: relative">
+                  <button
+                    class="button-delete-card"
+                    (click)="onDeleteCard(col, data, $event)"
+                  >
+                    X
+                  </button>
+                </div>
+                <img
+                  mat-card-image
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/800px-Unofficial_JavaScript_logo_2.svg.png"
+                  alt="Photo of a Shiba Inu"
+                  style="border-radius: 8px"
+                />
+                <div>
+                  <button style="border-radius: 5px; margin-right: 2px">
+                    Wirefram
+                  </button>
+                  <button style="border-radius: 5px; margin-right: 2px">
+                    UI
+                  </button>
+                </div>
+                {{ data }}
+                <div class="subtasks">
+                  <div>Subtasks</div>
+                  <div>1/3</div>
+                </div>
+                <mat-progress-bar
+                  mode="determinate"
+                  value="40"
+                ></mat-progress-bar>
+                <div class="bottom-card">
+                  <p-avatarGroup styleClass="mb-3">
+                    <p-avatar
+                      pButton
+                      image="https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png"
+                      shape="circle"
+                      class="bottom-card-iconAvatar"
+                      matTooltip="data.name"
+                    />
+                    <p-avatar
+                      pButton
+                      image="https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png"
+                      shape="circle"
+                      class="bottom-card-iconAvatar"
+                      matTooltip="data.name"
+                    />
+                    <p-avatar
+                      image="../assets/add icon.svg"
+                      shape="circle"
+                      class="bottom-card-iconAvatar plus-button"
+                      (click)="actionProfile($event)"
+                      matTooltip="dsd"
+                    />
+                  </p-avatarGroup>
+                  <div mat-card-avatar class="example-header-image"></div>
+
+                  <div class="information-card">
+                    <mat-icon
+                      aria-hidden="false"
+                      aria-label="Example home icon"
+                      fontIcon="attach_file"
+                      class="information-card-detail size-icon"
+                    ></mat-icon>
+                    <div class="information-card-detail">1</div>
+                    <mat-icon
+                      aria-hidden="false"
+                      aria-label="Example home icon"
+                      fontIcon="chat"
+                      class="information-card-detail size-icon"
+                    ></mat-icon>
+                    <div class="information-card-detail">1</div>
+                    <mat-icon
+                      aria-hidden="false"
+                      aria-label="Example home icon"
+                      fontIcon="schedule"
+                      class="information-card-detail size-icon"
+                    ></mat-icon>
+                    <div class="information-card-detail">8 d</div>
+                  </div>
+                </div>
+              </div>
+              } }
+            </div>
+
+            <div
+              *ngIf="col.estado; else saveButton"
+              style="padding: 8px 0px; border-radius: 8px; margin-right: 20px"
+            >
+              <div class="container-button-save">
+                <button
+                  class="button-transparent button-add-card"
+                  (click)="addCard(col.data, col.estado, col.name, idx)"
+                >
+                  <mat-icon
+                    aria-hidden="false"
+                    aria-label="Example home icon"
+                    fontIcon="add"
+                  ></mat-icon>
+                  <p>Añadir una tarjeta</p>
+                </button>
               </div>
             </div>
+            <ng-template #saveButton>
+              <div style="display: flex; width: 100%" class="save-card">
+                <button
+                  id="card"
+                  class="button-transparent button-add-card save-card"
+                  (click)="saveCard(col.data, idx, col.id)"
+                >
+                  <mat-icon
+                    aria-hidden="false"
+                    aria-label="Example home icon"
+                    fontIcon="save"
+                    class="save-card"
+                  ></mat-icon>
+                  <p class="save-card">Guardar tarjeta</p>
+                </button>
+                <button
+                  class="button-transparent button-add-card"
+                  (click)="avoidAddCard(col.data, idx)"
+                >
+                  <mat-icon
+                    aria-hidden="false"
+                    aria-label="Example home icon"
+                    fontIcon="close"
+                  ></mat-icon>
+                </button>
+              </div>
+            </ng-template>
           </div>
-          } }
         </div>
-
-        <div
-          *ngIf="col.estado; else saveButton"
-          style="padding: 8px 0px; border-radius: 8px; margin-right: 20px"
-        >
-          <div class="container-button-save">
-            <button
-              class="button-transparent button-add-card"
-              (click)="addCard(col.data, col.estado, col.name, idx)"
-            >
-              <mat-icon
-                aria-hidden="false"
-                aria-label="Example home icon"
-                fontIcon="add"
-              ></mat-icon>
-              <p>Añadir una tarjeta</p>
-            </button>
-          </div>
+        }
+        <div>
+          <button
+            class="button-transparent button-add-card container-button-save"
+            (click)="addColumn('hello')"
+          >
+            <mat-icon
+              aria-hidden="false"
+              aria-label="Example home icon"
+              fontIcon="add"
+            ></mat-icon>
+            <p>Añadir nueva columna</p>
+          </button>
         </div>
-        <ng-template #saveButton>
-          <div style="display: flex; width: 100%" class="save-card">
-            <button
-              id="card"
-              class="button-transparent button-add-card save-card"
-              (click)="saveCard(col.data, idx, col.id)"
-            >
-              <mat-icon
-                aria-hidden="false"
-                aria-label="Example home icon"
-                fontIcon="save"
-                class="save-card"
-              ></mat-icon>
-              <p class="save-card">Guardar tarjeta</p>
-            </button>
-            <button
-              class="button-transparent button-add-card"
-              (click)="avoidAddCard(col.data, idx)"
-            >
-              <mat-icon
-                aria-hidden="false"
-                aria-label="Example home icon"
-                fontIcon="close"
-              ></mat-icon>
-            </button>
-          </div>
-        </ng-template>
       </div>
-    </div>
-    }
-    <div>
-      <button
-        class="button-transparent button-add-card container-button-save"
-        (click)="addColumn('hello')"
-      >
-        <mat-icon
-          aria-hidden="false"
-          aria-label="Example home icon"
-          fontIcon="add"
-        ></mat-icon>
-        <p>Añadir nueva columna</p>
-      </button>
     </div>
   </div>
 </div>

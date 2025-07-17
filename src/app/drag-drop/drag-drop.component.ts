@@ -34,6 +34,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ModalCard } from '../modal-card/modal-card.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Header } from '../header/header.component';
 /**
  * @title Drag&Drop connected sorting
  */
@@ -69,6 +70,7 @@ interface Column {
     TooltipModule,
     MatCardModule,
     MatTooltipModule,
+    Header,
     ModalCard,
   ],
 })
