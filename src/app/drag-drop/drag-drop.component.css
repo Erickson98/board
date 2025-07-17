@@ -1,7 +1,7 @@
  
 .board{
     background-color: rgb(25, 25, 25);
-    height: 100%;
+    height: 92%;
     display: inline-flex; 
     white-space: nowrap;
     position: absolute;
@@ -359,7 +359,5 @@ h2.input-title-cards {
 .content {
     display: inline-block;
     width: 2000px;
-    /* Simula mucho contenido horizontal */
-    background: lightblue;
     height: 100%;
 }
