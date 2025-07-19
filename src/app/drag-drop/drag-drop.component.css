@@ -20,10 +20,12 @@
     flex: 1;
     
 }
-/* 
-.example-container:hover{ 
-background-color: rgba(255, 255, 255, 0.055);
-} */
+ 
+.hover-container-for-cards:hover{ 
+border-style: solid;
+    border-color: rgb(131, 129, 129);
+    border-width: 1.5px;
+}
 
  
 
@@ -93,6 +95,13 @@ background-color: rgba(255, 255, 255, 0.055);
     border-radius: 5px;
     margin: 0px 6px;
     gap: 10px;
+
+}
+
+.example-box:hover {
+    border-style: solid;
+    border-color: rgb(131, 129, 129);
+    border-width: 1.5px;
 }
 
 
@@ -119,7 +128,7 @@ background-color: rgba(255, 255, 255, 0.055);
 }
 
 .example-box:last-child {
-    border: none;
+    /* border: none; */
     cursor: pointer;
 }
 

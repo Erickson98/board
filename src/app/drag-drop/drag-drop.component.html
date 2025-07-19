@@ -36,7 +36,7 @@
               <textarea
                 id="titleCard"
                 #textarea
-                (enterPressed)="onEnterPressed(col.id)"
+                (enterPressed)="onEnterPressed(col.position)"
                 appAutoResize
                 [externalHeight]="externalHeight"
                 [(ngModel)]="col.name"
@@ -53,7 +53,7 @@
                 role="textbox"
                 class="input-title-cards"
                 style="cursor: pointer"
-                (click)="changeTitle(col.id, $event)"
+                (click)="changeTitle(col.position, $event)"
               >
                 {{ col.name }}
               </h2>
@@ -81,7 +81,7 @@
                 class="example-box"
                 cdkDrag
                 (click)="onClickOnCard(col, $event)"
-                (cdkDragMoved)="onDragMoved($event)"
+                (cdkDragStarted)="drag($event)"
                 (cdkDragReleased)="stopAutoScroll()"
                 (cdkDragEnded)="stopAutoScroll()"
               >

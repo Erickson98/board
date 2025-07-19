@@ -147,7 +147,6 @@ export class DragDrop implements AfterViewInit {
     });
   }
 
-  @Output() visibilitySidePeek = new EventEmitter<boolean>(); // Asume que enviarás un string, ajusta según necesites
   @ViewChild('element') element!: ElementRef;
 
   @ViewChild('textarea') textarea!: ElementRef<HTMLTextAreaElement>;
@@ -157,7 +156,6 @@ export class DragDrop implements AfterViewInit {
     if (event.key === 'Enter') {
       event.preventDefault();
       this.textarea.nativeElement.blur();
-      console.log('first');
     }
   }
   calculateHeaderHeight(): void {
@@ -166,8 +164,8 @@ export class DragDrop implements AfterViewInit {
       this.cdr.detectChanges();
     }
   }
-  onEnterPressed(id: number) {
-    this.changeTitle(id);
+  onEnterPressed(position: number) {
+    this.changeTitle(position);
   }
   //logic for mv5
   private autoScrollInterval: any = null;
@@ -208,7 +206,6 @@ export class DragDrop implements AfterViewInit {
   }
   //
   onInputChange() {
-    console.log('Nombre actualizado:', this.nombre);
     this.cdr.detectChanges();
   }
 
@@ -218,7 +215,6 @@ export class DragDrop implements AfterViewInit {
 
   @HostListener('document:click', ['$event'])
   clickout(event: Event) {
-    //TODO hacer un metodo exclusivo para cuadno se agregue una columna
     event.preventDefault();
     const clickedInside = this.eRef.nativeElement.contains(event.target);
 
@@ -228,38 +224,23 @@ export class DragDrop implements AfterViewInit {
     const plusButton = this.eRef.nativeElement.querySelector('.plusbutton');
     const clickInCard = this.eRef.nativeElement.querySelector('.example-box');
 
-    // if (plusButton.contains(event.target)) {
-    //   console.log('first');
-    //   // this.actionProfile();
-    // } else if (clickInCard.contains(event.target)) {
-    //   this.openDialog();
-    // }
     if (board.contains(event.target)) {
       const target = event.target as HTMLElement;
-      console.log(target.classList);
-      if (this.hasAnyClass(target, ['board', 'example-container'])) {
-        console.log('first');
-        this.visibilitySidePeek.emit(false);
-      }
+      // if (this.hasAnyClass(target, ['board', 'example-container'])) {
+      // }
       if (target.classList.contains('save-card')) {
         return;
       }
 
-      console.log(this.nombre);
-      // this.visibilitySidePeek.emit(false);
       this.columnList.map((x) => {
-        console.log(x.data[x.data.length - 1]);
         if (x.data[x.data.length - 1] === '' && this.nombre.trim() === '') {
           x.estado = true;
-          console.log('first');
           this.nombre = '';
           x.data.pop();
           return;
         }
 
-        console.log(this.nombre);
         if (x.data[x.data.length - 1] === '' && this.nombre.trim() !== '') {
-          console.log('first');
           x.data[x.data.length - 1] = this.nombre;
           this.nombre = '';
           x.estado = true;
@@ -271,15 +252,7 @@ export class DragDrop implements AfterViewInit {
       this.cdr.detectChanges();
     }
 
-    if (titleCard2?.contains(event.target)) {
-      console.log('first');
-    }
-    console.log(event.target);
     if (!titleCard?.contains(event.target) && clickedInside) {
-      console.log('first');
-      if (titleCard2.contains(event.target)) {
-        console.log('first');
-      }
       this.columnList.map((x) => {
         if (x.titleEditable) {
           x.titleEditable = false;
@@ -288,14 +261,8 @@ export class DragDrop implements AfterViewInit {
       });
       this.cdr.detectChanges();
     }
-    const cardElement = this.eRef.nativeElement.querySelector('#card');
-    if (cardElement.contains(event.target)) {
-      console.log('first');
-      // return;
-    }
     if (this.eRef.nativeElement.contains(event.target)) {
       this.onClickOutside();
-      console.log('first');
       this.columnList.map((x) => {
         if (!x.estado && this.nombre === '') {
           x.data.pop();
@@ -310,33 +277,19 @@ export class DragDrop implements AfterViewInit {
       });
     }
     if (!this.eRef.nativeElement.contains(event.target)) {
-      console.log(event);
       this.columnList.map((x) => {
         if (this.nombre !== '' && x.data[x.data.length - 1] === '') {
-          console.log('first');
-          console.log(x.data);
         }
-        if (x.data[x.data.length - 1] === '') {
-          // x.data[x.data.length - 1] = this.nombre;
-          // this.nombre = '';
-          console.log(x.data);
-        }
-        console.log(x.data);
         return x;
       });
-    }
-
-    if (!this.eRef.nativeElement.querySelector('#card')) {
-      console.log('first');
     }
   }
   ngOnChanges() {
     console.log('first');
   }
-  changeTitle(id: number, event: any = '') {
+  changeTitle(position: number, event: any = '') {
     this.isEditableTitleCard = !this.isEditableTitleCard;
     const height = event.target?.scrollHeight;
-    console.log(id);
     this.columnList.map((x) => {
       x.estado = true;
       if (x.data[x.data.length - 1] === '' && this.nombre.trim() === '') {
@@ -349,7 +302,7 @@ export class DragDrop implements AfterViewInit {
         this.nombre = '';
       }
 
-      if (x.id === id) {
+      if (x.position === position) {
         // this.calculateHeaderHeight();
         this.externalHeight = height;
 
@@ -367,7 +320,6 @@ export class DragDrop implements AfterViewInit {
       this.isClickAvatarGroup = false;
       return;
     }
-    this.visibilitySidePeek.emit(true);
     console.log('first');
     this.openDialog();
   }
@@ -381,8 +333,6 @@ export class DragDrop implements AfterViewInit {
     this.initDatabase();
     this.dataService.data$.subscribe((updatedData) => {
       this.data = updatedData;
-      console.log('data has been updated:', updatedData);
-      // Realiza cualquier otra acción necesaria
     });
   }
 
@@ -936,21 +886,7 @@ export class DragDrop implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    const separator = document.querySelector('.as-split-gutter') as HTMLElement;
-    console.log(separator);
-
-    // separator.style.display = 'none';
-    const asZone = document.querySelectorAll('.as-split-area');
-    if (asZone.length > 1) {
-      console.log((asZone[0] as HTMLElement).style);
-      const firstSplitArea = asZone[0] as HTMLElement;
-      // firstSplitArea.style.overflow = 'auto';
-      console.log(firstSplitArea.style.overflowX);
-      const secondElement = asZone[1] as HTMLElement;
-      secondElement.setAttribute('ng-reflect-visible', 'true');
-    }
     this.setFocus();
-    // this.calculateHeaderHeight();
     this.cdr.detectChanges();
   }
 
@@ -1080,9 +1016,12 @@ export class DragDrop implements AfterViewInit {
   trackByFn(index: number, item: any) {
     return index; // or item.id if you have a unique identifier
   }
-  drag(event: CdkDragStart<string[]>) {
-    console.log(event);
-    // this.selectText(this.element.nativeElement);
+  drag(event: any) {
+    const columnContainer = document.querySelectorAll('.example-container');
+    for (let index = 0; index < columnContainer.length; index++) {
+      const element = columnContainer[index];
+      element.classList.add('hover-container-for-cards');
+    }
   }
 
   onDeleteCard(col: any, data: any, event: MouseEvent) {
@@ -1139,6 +1078,11 @@ export class DragDrop implements AfterViewInit {
     }
   }
   drop(event: CdkDragDrop<string[]>) {
+    const columnContainer = document.querySelectorAll('.example-container');
+    for (let index = 0; index < columnContainer.length; index++) {
+      const element = columnContainer[index];
+      element.classList.remove('hover-container-for-cards');
+    }
     if (event.previousContainer === event.container) {
       moveItemInArray(
         event.container.data,
