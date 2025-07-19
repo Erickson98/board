@@ -742,7 +742,26 @@ export class DragDrop implements AfterViewInit {
         position: this.columnList.length + 1,
       });
     };
-
+    // this.columnRefs.changes.pipe(take(1)).subscribe(() => {
+    //   const scrollContinaer = document.querySelector(
+    //     '.scroll-container'
+    //   ) as any;
+    //   const scrollContainer = scrollContinaer.nativeElement;
+    //   scrollContainer.scrollLeft = scrollContainer.scrollWidth;
+    // });
+    setTimeout(() => {
+      const scrollContinaer = document.querySelector(
+        '.scroll-container'
+      ) as HTMLElement;
+      console.log(scrollContinaer);
+      scrollContinaer.scrollLeft = scrollContinaer.scrollWidth * 800;
+    }, 1);
+    // this.zone.onStable.pipe(take(1)).subscribe(() => {
+    //   const scrollContinaer = document.querySelector(
+    //     '.scroll-container'
+    //   ) as HTMLElement;
+    //   scrollContinaer.scrollLeft = scrollContinaer.scrollWidth;
+    // });
     request.onerror = (event) => {
       console.error('Error al añadir la columna:', event);
     };
@@ -1040,23 +1059,15 @@ export class DragDrop implements AfterViewInit {
       }
       return x;
     });
-    console.log(col);
     this.columnList[idx].data = col;
-    // col[col.length - 1] = this.nombre;
-    console.log(this.columnList[idx].data);
-    // col.splice(idx, 0, '');
-    console.log(idx);
     this.nombre = '';
     this.updateColumnData(colId, this.columnList[idx].data);
-    console.log(this.columnList[idx].data);
-    // this.updateColumHandler(colId, col);
     this.cdr.detectChanges();
     this.columnList[idx].data.push('');
   }
   avoidAddCard(col: string[], idx: number) {
     this.nombre = '';
     // this.isAddingCard = true;
-    console.log('first');
     this.columnList[idx].estado = true;
     col.pop();
     this.cdr.detectChanges();
