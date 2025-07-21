@@ -35,6 +35,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ModalCard } from '../modal-card/modal-card.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Header } from '../header/header.component';
+import AutoScrollHandler from './scrollHorizontal';
 /**
  * @title Drag&Drop connected sorting
  */
@@ -187,10 +188,6 @@ export class DragDrop implements AfterViewInit {
     }
   }
 
-  private calculateSpeed(distance: number): number {
-    return Math.min(15, distance / 5);
-  }
-
   private startAutoScroll(): void {
     if (this.autoScrollInterval) return;
 
@@ -203,6 +200,7 @@ export class DragDrop implements AfterViewInit {
     clearInterval(this.autoScrollInterval);
     this.autoScrollInterval = null;
     this.scrollSpeed = 0;
+    this.autoScroll.stop();
   }
   //
   onInputChange() {
@@ -884,10 +882,12 @@ export class DragDrop implements AfterViewInit {
   onBoardClick(event: Event) {
     this.cdr.detectChanges();
   }
-
+  autoScroll: any = '';
   ngAfterViewInit() {
     this.setFocus();
     this.cdr.detectChanges();
+    const scroll = document.querySelector('.scroll-container')! as HTMLElement;
+    this.autoScroll = new AutoScrollHandler(scroll);
   }
 
   actionProfile(event: any) {
@@ -1011,10 +1011,54 @@ export class DragDrop implements AfterViewInit {
 
   handleEmptyItem() {
     console.log('Elemento vacío encontrado');
-    // Aquí puedes añadir la lógica que necesitas
   }
   trackByFn(index: number, item: any) {
-    return index; // or item.id if you have a unique identifier
+    return index;
+  }
+  handle() {
+    const scroll = document.querySelector('.scroll-container') as HTMLElement;
+    const scrollThreshold = 100;
+    let scrollSpeed = 0;
+    let scrollInterval: any;
+
+    scroll.addEventListener('mousemove', (e: MouseEvent) => {
+      const { left, right } = scroll.getBoundingClientRect();
+      const x = e.clientX;
+
+      if (x < left + scrollThreshold) {
+        scrollSpeed = -this.calculateSpeed(left + scrollThreshold - x) * 2;
+        startAutoScroll();
+      } else if (x > right - scrollThreshold) {
+        scrollSpeed = this.calculateSpeed(x - (right - scrollThreshold)) * 2;
+        startAutoScroll();
+      } else {
+        stopAutoScroll();
+      }
+    });
+
+    scroll.addEventListener('mouseleave', stopAutoScroll);
+
+    function startAutoScroll() {
+      if (!scrollInterval) {
+        scrollInterval = setInterval(() => {
+          scroll.scrollLeft += scrollSpeed;
+        }, 16); // ~60 FPS
+      }
+    }
+
+    function stopAutoScroll() {
+      if (scrollInterval) {
+        clearInterval(scrollInterval);
+        scrollInterval = null;
+      }
+    }
+  }
+
+  calculateSpeed(distance: number): number {
+    // Ajusta estos valores para más o menos velocidad
+    const maxSpeed = 20;
+    const speed = distance / 5;
+    return Math.min(speed, maxSpeed);
   }
   drag(event: any) {
     const columnContainer = document.querySelectorAll('.example-container');
@@ -1022,6 +1066,7 @@ export class DragDrop implements AfterViewInit {
       const element = columnContainer[index];
       element.classList.add('hover-container-for-cards');
     }
+    this.autoScroll.start();
   }
 
   onDeleteCard(col: any, data: any, event: MouseEvent) {
@@ -1083,6 +1128,7 @@ export class DragDrop implements AfterViewInit {
       const element = columnContainer[index];
       element.classList.remove('hover-container-for-cards');
     }
+    this.autoScroll.stop();
     if (event.previousContainer === event.container) {
       moveItemInArray(
         event.container.data,
