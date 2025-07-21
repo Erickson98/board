@@ -186,6 +186,7 @@ export class DragDrop implements AfterViewInit {
     } else {
       this.stopAutoScroll();
     }
+    console.log('first');
   }
 
   private startAutoScroll(): void {
@@ -201,6 +202,10 @@ export class DragDrop implements AfterViewInit {
     this.autoScrollInterval = null;
     this.scrollSpeed = 0;
     this.autoScroll.stop();
+    console.log('first');
+  }
+  dropTittleCard() {
+    console.log('first');
   }
   //
   onInputChange() {
